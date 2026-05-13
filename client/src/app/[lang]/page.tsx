@@ -1,7 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const API = process.env.SERVER_API_URL || 'http://127.0.0.1:3001';
 
 async function getSettings() {
   try {

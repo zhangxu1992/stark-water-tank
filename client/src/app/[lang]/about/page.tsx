@@ -1,6 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const API = process.env.SERVER_API_URL || 'http://127.0.0.1:3001';
 
 async function getFaqs() {
   try { const r = await fetch(`${API}/api/faqs`, { next: { revalidate: 300 } }); return await r.json(); } catch { return []; }
