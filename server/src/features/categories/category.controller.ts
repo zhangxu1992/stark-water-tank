@@ -12,8 +12,8 @@ const service = new CategoryService(repo);
 
 const router = Router();
 
-// GET /api/categories?type=product|news
-router.get('/', authMiddleware, async (req: Request, res: Response, next: NextFunction) => {
+// GET /api/categories?type=product|news (public)
+router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const type = (req.query.type as string) || 'product';
     if (type !== 'product' && type !== 'news') {
