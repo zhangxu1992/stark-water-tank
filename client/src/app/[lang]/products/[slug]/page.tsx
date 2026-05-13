@@ -4,12 +4,27 @@ import { notFound } from 'next/navigation';
 
 const API = process.env.SERVER_API_URL || 'http://127.0.0.1:3001';
 
+type Props = { params: Promise<{ slug: string; lang: string }> };
+
 async function getProduct(slug: string) {
   try {
     const r = await fetch(`${API}/api/products/${slug}`, { next: { revalidate: 60 } });
     if (!r.ok) return null;
     return await r.json();
   } catch { return null; }
+}
+
+export async function generateMetadata({ params }: Props) {
+  const { slug } = await params;
+  const product = await getProduct(slug);
+  if (!product) return { title: 'Product Not Found' };
+  const t = JSON.parse(product.translations || '{}');
+  const en = t.en || {};
+  return {
+    title: en.name,
+    description: en.description?.slice(0, 160),
+    openGraph: { title: en.name, description: en.description?.slice(0, 160) },
+  };
 }
 
 export default async function ProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {

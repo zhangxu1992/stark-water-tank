@@ -4,8 +4,23 @@ import { notFound } from 'next/navigation';
 
 const API = process.env.SERVER_API_URL || 'http://127.0.0.1:3001';
 
+type Props = { params: Promise<{ slug: string; lang: string }> };
+
 async function getCase(slug: string) {
   try { const r = await fetch(`${API}/api/cases/${slug}`, { next: { revalidate: 60 } }); if (!r.ok) return null; return await r.json(); } catch { return null; }
+}
+
+export async function generateMetadata({ params }: Props) {
+  const { slug } = await params;
+  const item = await getCase(slug);
+  if (!item) return { title: 'Case Not Found' };
+  const t = JSON.parse(item.translations || '{}');
+  const en = t.en || {};
+  return {
+    title: en.name,
+    description: en.description?.slice(0, 160),
+    openGraph: { title: en.name, description: en.description?.slice(0, 160) },
+  };
 }
 
 export default async function CaseDetailPage({ params }: { params: Promise<{ slug: string }> }) {

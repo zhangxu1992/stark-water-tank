@@ -4,8 +4,23 @@ import { notFound } from 'next/navigation';
 
 const API = process.env.SERVER_API_URL || 'http://127.0.0.1:3001';
 
+type Props = { params: Promise<{ slug: string; lang: string }> };
+
 async function getArticle(slug: string) {
   try { const r = await fetch(`${API}/api/news/${slug}`, { next: { revalidate: 60 } }); if (!r.ok) return null; return await r.json(); } catch { return null; }
+}
+
+export async function generateMetadata({ params }: Props) {
+  const { slug } = await params;
+  const article = await getArticle(slug);
+  if (!article) return { title: 'Article Not Found' };
+  const t = JSON.parse(article.translations || '{}');
+  const en = t.en || {};
+  return {
+    title: en.title,
+    description: en.summary?.slice(0, 160) || en.title,
+    openGraph: { title: en.title, description: en.summary?.slice(0, 160), type: 'article', publishedTime: article.publishedAt },
+  };
 }
 
 export default async function NewsDetailPage({ params }: { params: Promise<{ slug: string }> }) {
