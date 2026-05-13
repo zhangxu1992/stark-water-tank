@@ -1,0 +1,174 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id            String         @id @default(uuid())
+  username      String         @unique
+  passwordHash  String         @map("password_hash")
+  role          String         @default("admin") // "super_admin" | "admin"
+  createdAt     DateTime       @default(now()) @map("created_at")
+  lastLoginAt   DateTime?      @map("last_login_at")
+  refreshTokens RefreshToken[]
+
+  @@map("admins")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  adminId   String   @map("admin_id")
+  admin     Admin    @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("refresh_tokens")
+}
+
+model Language {
+  id       String  @id @default(uuid())
+  code     String  @unique // en, zh, es, fr, de, ar, pt, ru, ja, ko
+  name     String  // English, 中文, Español...
+  isActive Boolean @default(true) @map("is_active")
+  sortOrder Int     @default(0) @map("sort_order")
+
+  @@map("languages")
+}
+
+model SiteSetting {
+  id    String @id @default(uuid())
+  key   String @unique // logo, company_name, address, phone, email, whatsapp, facebook_url, linkedin_url, tiktok_url, instagram_url, youtube_url, meta_title, meta_description
+  value String
+  group String @default("general") // general, social, seo, contact
+
+  @@map("site_settings")
+}
+
+model ProductCategory {
+  id           String    @id @default(uuid())
+  name         String
+  slug         String    @unique
+  translations String    @default("{}") // JSON: {en:"Water Tank", zh:"水箱", ...}
+  sortOrder    Int       @default(0) @map("sort_order")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  products     Product[]
+
+  @@map("product_categories")
+}
+
+model Product {
+  id           String          @id @default(uuid())
+  categoryId   String          @map("category_id")
+  category     ProductCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  slug         String          @unique
+  translations String          @default("{}") // JSON: {en:{name,description}, zh:{name,description}, ...}
+  parameters   String          @default("[]") // JSON: [{key_en:"Material", key_zh:"材质", value:"SS304/316"}, ...]
+  industries   String          @default("[]") // JSON: ["Food & Beverage", "Chemical", ...]
+  images       String          @default("[]") // JSON: ["/uploads/xxx.jpg", ...]
+  coverImage   String?         @map("cover_image")
+  isPublished  Boolean         @default(true) @map("is_published")
+  sortOrder    Int             @default(0) @map("sort_order")
+  createdAt    DateTime        @default(now()) @map("created_at")
+  updatedAt    DateTime        @updatedAt @map("updated_at")
+
+  @@map("products")
+}
+
+model Case {
+  id           String   @id @default(uuid())
+  slug         String   @unique
+  translations String   @default("{}") // JSON: {en:{name,description,content}, zh:{name,description,content}, ...}
+  images       String   @default("[]") // JSON: ["/uploads/xxx.jpg", ...]
+  coverImage   String?  @map("cover_image")
+  isPublished  Boolean  @default(true) @map("is_published")
+  sortOrder    Int      @default(0) @map("sort_order")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("cases")
+}
+
+model NewsCategory {
+  id           String   @id @default(uuid())
+  name         String
+  slug         String   @unique
+  translations String   @default("{}") // JSON: {en:"Company News", zh:"公司新闻", ...}
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  news         News[]
+
+  @@map("news_categories")
+}
+
+model News {
+  id           String       @id @default(uuid())
+  categoryId   String       @map("category_id")
+  category     NewsCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  slug         String       @unique
+  translations String       @default("{}") // JSON: {en:{title,summary,content}, zh:{title,summary,content}, ...}
+  coverImage   String?      @map("cover_image")
+  isPublished  Boolean      @default(true) @map("is_published")
+  publishedAt  DateTime?    @map("published_at")
+  createdAt    DateTime     @default(now()) @map("created_at")
+  updatedAt    DateTime     @updatedAt @map("updated_at")
+
+  @@map("news")
+}
+
+model Faq {
+  id           String   @id @default(uuid())
+  translations String   @default("{}") // JSON: {en:{question,answer}, zh:{question,answer}, ...}
+  isPublished  Boolean  @default(true) @map("is_published")
+  sortOrder    Int      @default(0) @map("sort_order")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("faqs")
+}
+
+model SeoMeta {
+  id              String  @id @default(uuid())
+  pagePath        String  @map("page_path") // /, /products, /about, /contact, /cases, /news
+  language        String  @default("en") // en, zh, es...
+  metaTitle       String? @map("meta_title")
+  metaDescription String? @map("meta_description")
+  ogTitle         String? @map("og_title")
+  ogDescription   String? @map("og_description")
+  ogImage         String? @map("og_image")
+  canonicalUrl    String? @map("canonical_url")
+  structuredData  String? @default("{}") @map("structured_data") // JSON
+
+  @@unique([pagePath, language])
+  @@map("seo_meta")
+}
+
+model SitemapConfig {
+  id         String @id @default(uuid())
+  pagePath   String @unique @map("page_path")
+  priority   Float  @default(0.5)
+  changefreq String @default("weekly") // always, hourly, daily, weekly, monthly, yearly, never
+  isIncluded Boolean @default(true) @map("is_included")
+
+  @@map("sitemap_config")
+}
+
+model Inquiry {
+  id         String   @id @default(uuid())
+  name       String
+  email      String
+  phone      String?
+  country    String?
+  company    String?
+  message    String
+  sourcePage String?  @map("source_page")
+  isRead     Boolean  @default(false) @map("is_read")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@map("inquiries")
+}

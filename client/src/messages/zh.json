@@ -1,0 +1,101 @@
+{
+  "common": {
+    "home": "首页",
+    "products": "产品",
+    "cases": "案例",
+    "news": "新闻",
+    "about": "关于我们",
+    "contact": "联系我们",
+    "readMore": "了解更多",
+    "viewAll": "查看全部",
+    "learnMore": "了解更多",
+    "getQuote": "获取报价",
+    "sendMessage": "发送消息",
+    "submit": "提交",
+    "loading": "加载中...",
+    "noResults": "暂无结果",
+    "backToList": "返回列表",
+    "pages": "页面",
+    "search": "搜索",
+    "all": "全部",
+    "previous": "上一页",
+    "next": "下一页"
+  },
+  "home": {
+    "heroTitle": "专业不锈钢水处理解决方案",
+    "heroSubtitle": "真实工厂直销，省去中间商成本",
+    "heroCta": "浏览产品",
+    "heroCta2": "联系我们",
+    "aboutTitle": "关于STARK",
+    "aboutDesc": "STARK环保科技有限公司拥有多年专业制造经验，专注于水处理设备的研发、生产和销售，主营不锈钢水箱及水处理系统。",
+    "statsYears": "年行业经验",
+    "statsCountries": "服务国家",
+    "statsYearsRange": "2000年至2024年品牌服务",
+    "whyChooseUs": "为什么选择我们",
+    "advantage1Title": "工厂直销价格",
+    "advantage1Desc": "真实工厂，省去中间商成本，价格比竞争对手低10%-15%",
+    "advantage2Title": "专业服务",
+    "advantage2Desc": "完善的客户档案，定期跟踪设备运行，及时响应客户问题",
+    "advantage3Title": "快速交付",
+    "advantage3Desc": "强大的生产能力确保在约定时间内快速交付",
+    "advantage4Title": "全球覆盖",
+    "advantage4Desc": "服务全球100多个国家的客户",
+    "featuredProducts": "精选产品",
+    "featuredCases": "精选案例",
+    "latestNews": "最新新闻",
+    "ctaTitle": "准备好开始了吗？",
+    "ctaDesc": "立即联系我们，获取水处理需求的免费咨询和报价。",
+    "ctaButton": "立即询盘"
+  },
+  "products": {
+    "title": "产品中心",
+    "subtitle": "浏览我们全面的不锈钢水处理产品系列",
+    "allCategories": "全部分类",
+    "parameters": "产品参数",
+    "applicableIndustries": "适用行业",
+    "relatedProducts": "相关产品",
+    "inquiryForProduct": "咨询此产品"
+  },
+  "cases": {
+    "title": "案例展示",
+    "subtitle": "了解我们的水处理解决方案在全球的应用",
+    "relatedCases": "相关案例"
+  },
+  "news": {
+    "title": "新闻动态",
+    "subtitle": "STARK最新动态和行业见解",
+    "publishedOn": "发布时间",
+    "relatedNews": "相关新闻"
+  },
+  "about": {
+    "title": "关于我们",
+    "subtitle": "了解STARK环保科技",
+    "ourStory": "我们的故事",
+    "factoryStrength": "工厂实力",
+    "faq": "常见问题"
+  },
+  "contact": {
+    "title": "联系我们",
+    "subtitle": "与我们的团队取得联系，获取咨询和支持",
+    "address": "地址",
+    "phone": "电话",
+    "email": "邮箱",
+    "whatsapp": "WhatsApp",
+    "followUs": "关注我们",
+    "formName": "您的姓名",
+    "formEmail": "邮箱地址",
+    "formPhone": "电话号码",
+    "formCountry": "国家",
+    "formCompany": "公司",
+    "formMessage": "您的留言",
+    "formSuccess": "感谢您！您的询盘已提交，我们将尽快回复。",
+    "formError": "抱歉，出现了一些问题，请重试。"
+  },
+  "footer": {
+    "about": "STARK环保科技有限公司是专业的不锈钢水箱和水处理设备制造商，服务全球100多个国家的客户。",
+    "quickLinks": "快速链接",
+    "contactInfo": "联系方式",
+    "followUs": "关注我们",
+    "copyright": "版权所有。"
+  }
+}
