@@ -33,12 +33,14 @@ import authRouter from './features/auth/auth.controller';
 import categoryRouter from './features/categories/category.controller';
 import productRouter from './features/products/product.controller';
 import caseRouter from './features/cases/case.controller';
+import newsRouter from './features/news/news.controller';
 import uploadRouter from './features/upload/upload.controller';
 
 app.use('/api/auth', authRouter);
 app.use('/api/categories', categoryRouter);
 app.use('/api/products', productRouter);
 app.use('/api/cases', caseRouter);
+app.use('/api/news', newsRouter);
 app.use('/api/upload', uploadRouter);
 
 // --- Error Handler (must be last) ---
