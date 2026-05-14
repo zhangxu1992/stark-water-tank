@@ -95,7 +95,13 @@
     "formCompany": "Entreprise",
     "formMessage": "Message",
     "formSuccess": "Merci! Votre demande a été envoyée.",
-    "formError": "Erreur. Réessayez."
+    "formError": "Erreur. Réessayez.",
+    "contactInfo": "Coordonnées",
+    "mobile": "Mobile",
+    "ourLocation": "Notre Emplacement",
+    "aboutUs": "À Propos",
+    "formTitle": "Envoyez-nous un Message",
+    "sendMessage": "Envoyer le Message"
   },
   "footer": {
     "about": "STARK est un fabricant professionnel de réservoirs en acier inoxydable.",

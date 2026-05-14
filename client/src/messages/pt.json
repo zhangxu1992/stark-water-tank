@@ -94,7 +94,13 @@
     "formCompany": "Empresa",
     "formMessage": "Mensagem",
     "formSuccess": "Obrigado! Sua consulta foi enviada.",
-    "formError": "Erro. Tente novamente."
+    "formError": "Erro. Tente novamente.",
+    "contactInfo": "Informações de Contato",
+    "mobile": "Celular",
+    "ourLocation": "Nossa Localização",
+    "aboutUs": "Sobre Nós",
+    "formTitle": "Envie-nos uma Mensagem",
+    "sendMessage": "Enviar Mensagem"
   },
   "footer": {
     "about": "STARK é fabricante profissional de tanques de aço inoxidável.",

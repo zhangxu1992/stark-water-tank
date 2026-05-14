@@ -94,7 +94,13 @@
     "formCompany": "会社名",
     "formMessage": "メッセージ",
     "formSuccess": "ありがとうございます。お問い合わせを送信しました。",
-    "formError": "エラー。もう一度お試しください。"
+    "formError": "エラー。もう一度お試しください。",
+    "contactInfo": "お問い合わせ情報",
+    "mobile": "携帯電話",
+    "ourLocation": "所在地",
+    "aboutUs": "会社概要",
+    "formTitle": "メッセージを送信",
+    "sendMessage": "送信する"
   },
   "footer": {
     "about": "STARKはステンレス鋼タンクの専門メーカーです。",

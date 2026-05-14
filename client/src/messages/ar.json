@@ -94,7 +94,13 @@
     "formCompany": "الشركة",
     "formMessage": "الرسالة",
     "formSuccess": "شكراً! تم إرسال استفسارك.",
-    "formError": "خطأ. حاول مرة أخرى."
+    "formError": "خطأ. حاول مرة أخرى.",
+    "contactInfo": "معلومات الاتصال",
+    "mobile": "الجوال",
+    "ourLocation": "موقعنا",
+    "aboutUs": "معلومات عنا",
+    "formTitle": "أرسل لنا رسالة",
+    "sendMessage": "إرسال الرسالة"
   },
   "footer": {
     "about": "STARK هي شركة مصنعة محترفة لخزانات الفولاذ المقاوم للصدأ.",
