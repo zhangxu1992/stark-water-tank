@@ -39,10 +39,15 @@ export default function CasesAdminPage() {
   async function handleDelete(id: string, slug: string) {
     if (!confirm(`Delete case "${slug}"?`)) return;
     const token = getToken();
+    try { await apiClient.delete(`/api/cases/${id}`, token!); loadData(); } catch { alert('Failed to delete'); }
+  }
+
+  async function handleTogglePublished(id: string, current: boolean) {
+    const token = getToken();
     try {
-      await apiClient.delete(`/api/cases/${id}`, token!);
-      loadData();
-    } catch (err) { alert('Failed to delete'); }
+      await apiClient.put(`/api/cases/${id}`, { isPublished: !current }, token!);
+      setCases(prev => prev.map(c => c.id === id ? { ...c, isPublished: !current } : c));
+    } catch {}
   }
 
   function getTranslatedName(translationsStr: string): string {
@@ -99,8 +104,13 @@ export default function CasesAdminPage() {
                 </td>
                 <td className="px-6 py-4 text-sm text-text-secondary">{new Date(c.createdAt).toLocaleDateString()}</td>
                 <td className="px-6 py-4 text-right">
-                  <button onClick={() => router.push(`/admin/cases/${c.id}`)} className="px-3 py-1.5 text-xs font-medium text-text-secondary hover:text-primary hover:bg-bg-alt rounded-lg transition-colors">Edit</button>
+                  <div className="flex items-center justify-end gap-2">
+                    <button onClick={() => handleTogglePublished(c.id, c.isPublished)} className={`w-8 h-5 rounded-full relative transition-colors ${c.isPublished ? 'bg-green-500' : 'bg-gray-300'}`}>
+                      <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform ${c.isPublished ? 'left-3.5' : 'left-0.5'}`} />
+                    </button>
+                    <button onClick={() => router.push(`/admin/cases/${c.id}`)} className="px-3 py-1.5 text-xs font-medium text-text-secondary hover:text-primary hover:bg-bg-alt rounded-lg transition-colors">Edit</button>
                   <button onClick={() => handleDelete(c.id, c.slug)} className="ml-2 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors">Delete</button>
+                  </div>
                 </td>
               </tr>
             ))}

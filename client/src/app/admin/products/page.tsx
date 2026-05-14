@@ -56,6 +56,14 @@ export default function ProductsAdminPage() {
     }
   }
 
+  async function handleTogglePublished(id: string, current: boolean) {
+    const token = getToken();
+    try {
+      await apiClient.put(`/api/products/${id}`, { isPublished: !current }, token!);
+      setProducts(prev => prev.map(p => p.id === id ? { ...p, isPublished: !current } : p));
+    } catch {}
+  }
+
   async function handleDelete(id: string, slug: string) {
     if (!confirm(`Delete product "${slug}"?`)) return;
     const token = getToken();
@@ -152,6 +160,9 @@ export default function ProductsAdminPage() {
                 </td>
                 <td className="px-6 py-4 text-right">
                   <div className="flex items-center justify-end gap-2">
+                    <button onClick={() => handleTogglePublished(prod.id, prod.isPublished)} className={`w-8 h-5 rounded-full relative transition-colors ${prod.isPublished ? 'bg-green-500' : 'bg-gray-300'}`} title={prod.isPublished ? 'Published — click to unpublish' : 'Draft — click to publish'}>
+                      <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform ${prod.isPublished ? 'left-3.5' : 'left-0.5'}`} />
+                    </button>
                     <button
                       onClick={() => router.push(`/admin/products/${prod.id}`)}
                       className="px-3 py-1.5 text-xs font-medium text-text-secondary hover:text-primary hover:bg-bg-alt rounded-lg transition-colors"

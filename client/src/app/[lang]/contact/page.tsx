@@ -17,7 +17,7 @@ export default function ContactPage() {
     e.preventDefault();
     setStatus('sending');
     try {
-      await apiClient.post('/api/inquiries', form);
+      await apiClient.post('/api/inquiries', { ...form, sourcePage: 'contact' });
       setStatus('success');
       setForm({ name: '', email: '', phone: '', country: '', company: '', message: '' });
       setTimeout(() => setStatus('idle'), 5000);

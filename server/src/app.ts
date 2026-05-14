@@ -39,6 +39,7 @@ import inquiryRouter from './features/inquiries/inquiry.controller';
 import settingsRouter from './features/settings/settings.controller';
 import seoRouter from './features/seo/seo.controller';
 import dashboardRouter from './features/dashboard/dashboard.controller';
+import pagesRouter from './features/pages/pages.controller';
 import uploadRouter from './features/upload/upload.controller';
 
 app.use('/api/auth', authRouter);
@@ -51,6 +52,7 @@ app.use('/api/inquiries', inquiryRouter);
 app.use('/api', settingsRouter);
 app.use('/api/seo', seoRouter);
 app.use('/api/dashboard', dashboardRouter);
+app.use('/api/pages', pagesRouter);
 app.use('/api/upload', uploadRouter);
 
 // --- Error Handler (must be last) ---
