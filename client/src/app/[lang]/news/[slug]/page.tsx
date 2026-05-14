@@ -48,7 +48,7 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ slu
           </div>
 
           <article>
-            <div className="text-sm text-accent font-medium mb-2">{article.category?.name}</div>
+            <div className="text-sm text-accent font-medium mb-2">{getTranslation(article.category?.translations || '{}', lang, 'name') || article.category?.name}</div>
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">{title}</h1>
             <div className="text-sm text-text-secondary mb-8">{t('publishedOn')}: {new Date(article.publishedAt || article.createdAt).toLocaleDateString()}</div>
 

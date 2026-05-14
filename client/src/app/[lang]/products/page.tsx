@@ -49,7 +49,7 @@ export default async function ProductsPage({ params, searchParams }: { params: P
                 href={`/products?category=${c.id}`}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${category === c.id ? 'bg-primary text-white' : 'bg-bg-alt text-text-secondary hover:bg-border'}`}
               >
-                {c.name}
+                {getTranslation(c.translations, lang, 'name') || c.name}
               </Link>
             ))}
           </div>
@@ -67,7 +67,7 @@ export default async function ProductsPage({ params, searchParams }: { params: P
                     )}
                   </div>
                   <div className="p-5">
-                    <div className="text-xs text-accent mb-1">{p.category?.name}</div>
+                    <div className="text-xs text-accent mb-1">{getTranslation(p.category?.translations || '{}', lang, 'name') || p.category?.name}</div>
                     <h3 className="font-semibold text-text-primary group-hover:text-accent transition-colors">{getTranslation(p.translations, lang, 'name')}</h3>
                     <p className="text-sm text-text-secondary mt-2 line-clamp-2">{getTranslation(p.translations, lang, 'description')}</p>
                   </div>

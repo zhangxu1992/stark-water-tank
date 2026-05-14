@@ -82,7 +82,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
             {/* Info */}
             <div>
-              <div className="text-sm text-accent font-medium mb-2">{product.category?.name}</div>
+              <div className="text-sm text-accent font-medium mb-2">{getTranslation(product.category?.translations || '{}', lang, 'name') || product.category?.name}</div>
               <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-text-primary">{name}</h1>
               <p className="text-text-secondary mt-4 leading-relaxed">{description}</p>
 
