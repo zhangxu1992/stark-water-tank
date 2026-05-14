@@ -24,6 +24,7 @@ const superAdminItems = [
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [admin, setAdmin] = useState<{ username: string; role: string } | null>(null);
+  const [unreadCount, setUnreadCount] = useState(0);
   const pathname = usePathname();
   const router = useRouter();
 
@@ -34,6 +35,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }
     const info = getAdminInfo();
     if (info) setAdmin(info);
+    // Fetch unread count
+    const token = getToken();
+    if (token) {
+      fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/dashboard/unread-inquiries-count`, {
+        headers: { Authorization: `Bearer ${token}` },
+      }).then(r => r.json()).then(d => setUnreadCount(d.unread || 0)).catch(() => {});
+    }
   }, [pathname, router]);
 
   function handleLogout() {
@@ -83,6 +91,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
                 </svg>
                 {item.label}
+                {item.href === '/admin/inquiries' && unreadCount > 0 && (
+                  <span className="ml-auto inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-red-500 text-white text-[10px] font-bold">{unreadCount}</span>
+                )}
               </Link>
             );
           })}

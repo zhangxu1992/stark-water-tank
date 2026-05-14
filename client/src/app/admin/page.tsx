@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import apiClient from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
 
 interface DashboardData {
@@ -9,29 +10,21 @@ interface DashboardData {
   cases: number;
   news: number;
   faqs: number;
-  inquiries: number;
-  unreadInquiries: number;
+  inquiries: { total: number; unread: number };
 }
 
 export default function DashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState<{ products: number; cases: number; news: number; faqs: number; inquiries: { total: number; unread: number } } | null>(null);
 
   useEffect(() => {
     const token = getToken();
     if (!token) return;
-
-    // Fetch dashboard data (placeholder for now — will connect to real API)
-    // For now, show placeholder counts
-    setData({
-      products: 0,
-      cases: 0,
-      news: 0,
-      faqs: 0,
-      inquiries: 0,
-      unreadInquiries: 0,
-    });
-    setLoading(false);
+    apiClient.get<DashboardData>('/api/dashboard', token)
+      .then(setData)
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
 
   if (loading) {
@@ -52,8 +45,8 @@ export default function DashboardPage() {
     { label: 'Cases', value: data?.cases ?? 0, href: '/admin/cases', color: 'bg-green-50 text-green-700' },
     { label: 'News', value: data?.news ?? 0, href: '/admin/news', color: 'bg-purple-50 text-purple-700' },
     { label: 'FAQs', value: data?.faqs ?? 0, href: '/admin/faqs', color: 'bg-orange-50 text-orange-700' },
-    { label: 'Inquiries', value: data?.inquiries ?? 0, href: '/admin/inquiries', color: 'bg-cyan-50 text-cyan-700' },
-    { label: 'Unread Inquiries', value: data?.unreadInquiries ?? 0, href: '/admin/inquiries', color: 'bg-red-50 text-red-700' },
+    { label: 'Total Inquiries', value: data?.inquiries?.total ?? 0, href: '/admin/inquiries', color: 'bg-cyan-50 text-cyan-700' },
+    { label: 'Unread Inquiries', value: data?.inquiries?.unread ?? 0, href: '/admin/inquiries', color: 'bg-red-50 text-red-700' },
   ];
 
   return (
@@ -67,7 +60,7 @@ export default function DashboardPage() {
             href={card.href}
             className="bg-white p-6 rounded-2xl border border-border shadow-sm hover:shadow-md transition-shadow"
           >
-            <div className={`inline-flex items-center justify-center w-10 h-10 rounded-xl ${card.color} mb-4`}>
+            <div className={`inline-flex items-center justify-center min-w-[2.5rem] h-10 px-3 rounded-xl ${card.color} mb-4`}>
               <span className="text-lg font-bold">{card.value}</span>
             </div>
             <h3 className="text-sm font-medium text-text-secondary">{card.label}</h3>
@@ -87,7 +80,7 @@ export default function DashboardPage() {
           <Link href="/admin/news/new" className="px-4 py-2 bg-primary text-white text-sm rounded-lg text-center hover:bg-primary-light transition-colors">
             + New Article
           </Link>
-          <Link href="/admin/faqs/new" className="px-4 py-2 bg-primary text-white text-sm rounded-lg text-center hover:bg-primary-light transition-colors">
+          <Link href="/admin/faqs" className="px-4 py-2 bg-primary text-white text-sm rounded-lg text-center hover:bg-primary-light transition-colors">
             + New FAQ
           </Link>
         </div>

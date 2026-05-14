@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import { createInquirySchema } from './inquiry.dto';
 import { authMiddleware } from '../../shared/middleware/auth';
 import { validate } from '../../shared/middleware/validate';
+import { sendInquiryNotification } from '../../shared/mailer';
 
 const prisma = new PrismaClient();
 const router = Router();
@@ -11,6 +12,8 @@ const router = Router();
 router.post('/', validate(createInquirySchema), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const inquiry = await prisma.inquiry.create({ data: req.body });
+    // Send email notification (non-blocking)
+    sendInquiryNotification(req.body).catch(() => {});
     res.status(201).json({ message: 'Inquiry submitted', id: inquiry.id });
   } catch (err) { next(err); }
 });
