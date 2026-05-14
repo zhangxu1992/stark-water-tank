@@ -16,8 +16,8 @@ const router = Router();
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const type = (req.query.type as string) || 'product';
-    if (type !== 'product' && type !== 'news') {
-      return res.status(400).json({ title: 'BAD_REQUEST', status: 400, detail: 'type must be "product" or "news"' });
+    if (!['product', 'news', 'case'].includes(type)) {
+      return res.status(400).json({ title: 'BAD_REQUEST', status: 400, detail: 'type must be "product", "news", or "case"' });
     }
     const categories = await service.list(type);
     res.json(categories);
@@ -40,8 +40,8 @@ router.post('/', authMiddleware, validate(createCategorySchema), async (req: Req
 router.put('/:id', authMiddleware, validate(updateCategorySchema), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const type = (req.query.type as string) || 'product';
-    if (type !== 'product' && type !== 'news') {
-      return res.status(400).json({ title: 'BAD_REQUEST', status: 400, detail: 'type must be "product" or "news"' });
+    if (!['product', 'news', 'case'].includes(type)) {
+      return res.status(400).json({ title: 'BAD_REQUEST', status: 400, detail: 'type must be "product", "news", or "case"' });
     }
     const category = await service.update(type, req.params.id, req.body);
     res.json(category);
@@ -54,8 +54,8 @@ router.put('/:id', authMiddleware, validate(updateCategorySchema), async (req: R
 router.delete('/:id', authMiddleware, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const type = (req.query.type as string) || 'product';
-    if (type !== 'product' && type !== 'news') {
-      return res.status(400).json({ title: 'BAD_REQUEST', status: 400, detail: 'type must be "product" or "news"' });
+    if (!['product', 'news', 'case'].includes(type)) {
+      return res.status(400).json({ title: 'BAD_REQUEST', status: 400, detail: 'type must be "product", "news", or "case"' });
     }
     await service.delete(type, req.params.id);
     res.json({ message: 'Category deleted' });

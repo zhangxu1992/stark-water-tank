@@ -2,10 +2,12 @@ import { CategoryRepository } from './category.repository';
 import { NotFoundError, ConflictError } from '../../shared/errors';
 import { CreateCategoryInput, UpdateCategoryInput } from './category.dto';
 
+export type CategoryType = 'product' | 'news' | 'case';
+
 export class CategoryService {
   constructor(private repo: CategoryRepository) {}
 
-  async list(type: 'product' | 'news') {
+  async list(type: CategoryType) {
     return this.repo.findAll(type);
   }
 
@@ -25,7 +27,7 @@ export class CategoryService {
     return this.repo.create(input.type, data);
   }
 
-  async update(type: 'product' | 'news', id: string, input: UpdateCategoryInput) {
+  async update(type: CategoryType, id: string, input: UpdateCategoryInput) {
     const existing = await this.repo.findById(type, id);
     if (!existing) {
       throw new NotFoundError('Category', id);
@@ -47,27 +49,24 @@ export class CategoryService {
     return this.repo.update(type, id, data);
   }
 
-  async delete(type: 'product' | 'news', id: string) {
+  async delete(type: CategoryType, id: string) {
     const existing = await this.repo.findById(type, id);
     if (!existing) {
       throw new NotFoundError('Category', id);
     }
 
     // Check if has children
-    if (type === 'product') {
-      const count = await (this.repo as any).prisma.product.count({
-        where: { categoryId: id },
-      });
-      if (count > 0) {
-        throw new ConflictError('Cannot delete category with existing products. Remove or reassign products first.');
-      }
-    } else {
-      const count = await (this.repo as any).prisma.news.count({
-        where: { categoryId: id },
-      });
-      if (count > 0) {
-        throw new ConflictError('Cannot delete category with existing news. Remove or reassign news first.');
-      }
+    const relationMap: Record<string, { table: string; field: string }> = {
+      product: { table: 'product', field: 'categoryId' },
+      news:    { table: 'news',    field: 'categoryId' },
+      case:    { table: 'case',    field: 'categoryId' },
+    };
+    const rel = relationMap[type];
+    const count = await (this.repo as any).prisma[rel.table].count({
+      where: { [rel.field]: id },
+    });
+    if (count > 0) {
+      throw new ConflictError(`Cannot delete category with existing ${type}s. Remove or reassign first.`);
     }
 
     await this.repo.delete(type, id);
