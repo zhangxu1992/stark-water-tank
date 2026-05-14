@@ -56,7 +56,7 @@ export default async function LocaleLayout({
   const { lang } = await params;
   if (!hasLocale(routing.locales, lang)) notFound();
 
-  const messages = await getMessages();
+  const [messages, settings] = await Promise.all([getMessages(), getSettings()]);
 
   return (
     <html lang={lang}>
