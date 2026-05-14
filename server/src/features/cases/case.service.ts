@@ -5,11 +5,11 @@ import { CreateCaseInput, UpdateCaseInput } from './case.dto';
 export class CaseService {
   constructor(private repo: CaseRepository) {}
 
-  async list(params: { page?: number; limit?: number }) {
+  async list(params: { categoryId?: string; page?: number; limit?: number }) {
     return this.repo.findAll(params);
   }
 
-  async listAdmin(params: { page?: number; limit?: number }) {
+  async listAdmin(params: { categoryId?: string; page?: number; limit?: number }) {
     return this.repo.findAllAdmin(params);
   }
 
@@ -24,6 +24,7 @@ export class CaseService {
     if (existing) throw new ConflictError(`Case slug "${input.slug}" already exists`);
 
     return this.repo.create({
+      categoryId: input.categoryId || null,
       slug: input.slug,
       translations: JSON.stringify(input.translations),
       images: JSON.stringify(input.images),
@@ -46,6 +47,7 @@ export class CaseService {
     }
 
     const data: any = {};
+    if (input.categoryId !== undefined) data.categoryId = input.categoryId;
     if (input.slug !== undefined) data.slug = input.slug;
     if (input.translations !== undefined) data.translations = JSON.stringify(input.translations);
     if (input.images !== undefined) data.images = JSON.stringify(input.images);

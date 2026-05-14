@@ -16,6 +16,7 @@ const router = Router();
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const result = await service.list({
+      categoryId: req.query.categoryId as string,
       page: parseInt(req.query.page as string) || 1,
       limit: parseInt(req.query.limit as string) || 20,
     });
@@ -29,6 +30,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 router.get('/admin', authMiddleware, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const result = await service.listAdmin({
+      categoryId: req.query.categoryId as string,
       page: parseInt(req.query.page as string) || 1,
       limit: parseInt(req.query.limit as string) || 20,
     });

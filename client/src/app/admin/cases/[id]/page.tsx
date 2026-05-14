@@ -16,6 +16,8 @@ export default function CaseFormPage({ params }: { params: Promise<{ id: string 
   const [error, setError] = useState('');
 
   const [slug, setSlug] = useState('');
+  const [categoryId, setCategoryId] = useState('');
+  const [categories, setCategories] = useState<any[]>([]);
   const [nameEn, setNameEn] = useState('');
   const [descEn, setDescEn] = useState('');
   const [contentEn, setContentEn] = useState('');
@@ -31,7 +33,12 @@ export default function CaseFormPage({ params }: { params: Promise<{ id: string 
   const [isPublished, setIsPublished] = useState(true);
   const [sortOrder, setSortOrder] = useState(0);
 
-  useEffect(() => { if (!isNew) loadCase(); }, [id]);
+  useEffect(() => { loadCategories(); if (!isNew) loadCase(); }, [id]);
+
+  async function loadCategories() {
+    const token = getToken();
+    try { setCategories(await apiClient.get<any[]>('/api/categories?type=case', token!)); } catch {}
+  }
 
   async function loadCase() {
     const token = getToken();
@@ -40,6 +47,7 @@ export default function CaseFormPage({ params }: { params: Promise<{ id: string 
       const item = result.items.find((p: any) => p.id === id);
       if (!item) { setError('Case not found'); return; }
       setSlug(item.slug);
+      setCategoryId(item.categoryId || '');
       setImages(JSON.parse(item.images || '[]'));
       setIsPublished(item.isPublished);
       setSortOrder(item.sortOrder);
@@ -57,6 +65,7 @@ export default function CaseFormPage({ params }: { params: Promise<{ id: string 
     e.preventDefault();
     setSaving(true); setError('');
     const data = {
+      categoryId: categoryId || null,
       slug,
       translations: { en: { name: nameEn, description: descEn, content: contentEn }, zh: { name: nameZh, description: descZh, content: contentZh } },
       images, coverImage: images[0] || null,
@@ -87,9 +96,18 @@ export default function CaseFormPage({ params }: { params: Promise<{ id: string 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="bg-white rounded-2xl border border-border shadow-sm p-6 space-y-4">
           <h2 className="text-lg font-semibold">Basic Information</h2>
-          <div>
-            <label className="block text-sm font-medium mb-1.5">Slug *</label>
-            <input type="text" value={slug} onChange={e => setSlug(e.target.value)} required placeholder="kenya-water-project" className={f} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-1.5">Category</label>
+              <select value={categoryId} onChange={e => setCategoryId(e.target.value)} className={f}>
+                <option value="">None</option>
+                {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1.5">Slug *</label>
+              <input type="text" value={slug} onChange={e => setSlug(e.target.value)} required placeholder="kenya-water-project" className={f} />
+            </div>
           </div>
         </div>
 

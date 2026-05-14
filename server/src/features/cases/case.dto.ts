@@ -7,6 +7,7 @@ const caseTranslationSchema = z.object({
 });
 
 export const createCaseSchema = z.object({
+  categoryId: z.string().nullable().default(null),
   slug: z.string().min(1).regex(/^[a-z0-9-]+(-[a-z0-9-]+)*$/),
   translations: z.record(caseTranslationSchema).default({ en: { name: '', description: '', content: '' } }),
   images: z.array(z.string()).default([]),

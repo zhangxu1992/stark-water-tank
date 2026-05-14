@@ -83,9 +83,24 @@ model Product {
   @@map("products")
 }
 
-model Case {
+model CaseCategory {
   id           String   @id @default(uuid())
+  name         String
   slug         String   @unique
+  translations String   @default("{}") // JSON: {en:"Water Projects", zh:"水利工程", ...}
+  sortOrder    Int      @default(0) @map("sort_order")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  cases        Case[]
+
+  @@map("case_categories")
+}
+
+model Case {
+  id           String        @id @default(uuid())
+  categoryId   String?       @map("category_id")
+  category     CaseCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  slug         String        @unique
   translations String   @default("{}") // JSON: {en:{name,description,content}, zh:{name,description,content}, ...}
   images       String   @default("[]") // JSON: ["/uploads/xxx.jpg", ...]
   coverImage   String?  @map("cover_image")

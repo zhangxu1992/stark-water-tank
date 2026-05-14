@@ -3,13 +3,15 @@ import { PrismaClient } from '@prisma/client';
 export class CaseRepository {
   constructor(private prisma: PrismaClient) {}
 
-  async findAll(params: { page?: number; limit?: number }) {
-    const { page = 1, limit = 20 } = params;
-    const where = { isPublished: true };
+  async findAll(params: { categoryId?: string; page?: number; limit?: number }) {
+    const { categoryId, page = 1, limit = 20 } = params;
+    const where: any = { isPublished: true };
+    if (categoryId) where.categoryId = categoryId;
 
     const [items, total] = await Promise.all([
       this.prisma.case.findMany({
         where,
+        include: { category: true },
         orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }],
         skip: (page - 1) * limit,
         take: limit,
@@ -20,11 +22,15 @@ export class CaseRepository {
     return { items, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
-  async findAllAdmin(params: { page?: number; limit?: number }) {
-    const { page = 1, limit = 20 } = params;
+  async findAllAdmin(params: { categoryId?: string; page?: number; limit?: number }) {
+    const { categoryId, page = 1, limit = 20 } = params;
+    const where: any = {};
+    if (categoryId) where.categoryId = categoryId;
 
     const [items, total] = await Promise.all([
       this.prisma.case.findMany({
+        where,
+        include: { category: true },
         orderBy: { createdAt: 'desc' },
         skip: (page - 1) * limit,
         take: limit,
