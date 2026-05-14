@@ -1,0 +1,10 @@
+{
+  "common": { "home": "홈", "products": "제품", "cases": "사례", "news": "뉴스", "about": "회사소개", "contact": "문의하기", "readMore": "더보기", "viewAll": "전체보기", "learnMore": "자세히", "getQuote": "견적요청", "sendMessage": "보내기", "submit": "제출", "loading": "로딩중...", "noResults": "결과 없음", "backToList": "목록으로", "pages": "페이지", "search": "검색", "all": "전체", "previous": "이전", "next": "다음" },
+  "home": { "heroTitle": "스테인리스 스틸 수처리 전문 솔루션", "heroSubtitle": "실제 공장, 직판매, 중간 비용 절감", "heroCta": "제품 보기", "heroCta2": "문의하기", "aboutTitle": "STARK 소개", "aboutDesc": "다년간의 경험을 바탕으로 STARK는 수처리 장비와 스테인리스 스틸 탱크에 주력하고 있습니다.", "statsYears": "년 경력", "statsCountries": "서비스 국가", "whyChooseUs": "선택 이유", "advantage1Title": "공장 직판 가격", "advantage1Desc": "실제 공장, 경쟁사 대비 10%-15% 저렴", "advantage2Title": "전문 서비스", "advantage2Desc": "완전한 고객 파일, 정기적 모니터링", "advantage3Title": "신속 배송", "advantage3Desc": "강력한 생산 능력으로 신속 배송", "advantage4Title": "글로벌 네트워크", "advantage4Desc": "100개국 이상 고객 서비스", "featuredProducts": "주요 제품", "featuredCases": "주요 사례", "latestNews": "최신 뉴스", "ctaTitle": "시작할 준비가 되셨나요?", "ctaDesc": "무료 상담을 위해 문의하세요.", "ctaButton": "문의 보내기" },
+  "products": { "title": "제품", "subtitle": "제품 라인업을 살펴보세요", "allCategories": "전체 카테고리", "parameters": "제품 사양", "applicableIndustries": "적용 산업", "relatedProducts": "관련 제품", "inquiryForProduct": "제품 문의" },
+  "cases": { "title": "사례", "subtitle": "전 세계 적용 사례", "relatedCases": "관련 사례" },
+  "news": { "title": "뉴스", "subtitle": "STARK 최신 소식", "publishedOn": "게시일", "relatedNews": "관련 뉴스" },
+  "about": { "title": "회사소개", "subtitle": "STARK에 대해 알아보세요", "ourStory": "우리의 이야기", "factoryStrength": "공장 역량", "faq": "자주 묻는 질문" },
+  "contact": { "title": "문의하기", "subtitle": "언제든지 문의하세요", "address": "주소", "phone": "전화", "email": "이메일", "whatsapp": "WhatsApp", "followUs": "팔로우", "formName": "이름", "formEmail": "이메일", "formPhone": "전화번호", "formCountry": "국가", "formCompany": "회사명", "formMessage": "메시지", "formSuccess": "감사합니다! 문의가 접수되었습니다.", "formError": "오류가 발생했습니다. 다시 시도해주세요." },
+  "footer": { "about": "STARK는 스테인리스 스틸 탱크 전문 제조업체입니다.", "quickLinks": "바로가기", "contactInfo": "연락처", "followUs": "팔로우", "copyright": "All rights reserved." }
+}
