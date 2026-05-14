@@ -81,6 +81,7 @@ export default function SettingsAdminPage() {
           <>
             <Field label="Meta Title" key="meta_title" />
             <Field label="Meta Description" key="meta_description" multiline />
+            <Field label="Google Analytics ID (e.g. G-XXXXXXXXXX)" key="ga_measurement_id" />
           </>
         )}
 

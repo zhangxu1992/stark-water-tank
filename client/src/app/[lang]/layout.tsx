@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
 import '@/app/globals.css';
 
 const API = process.env.SERVER_API_URL || 'http://127.0.0.1:3001';
@@ -81,6 +82,7 @@ export default async function LocaleLayout({
       </head>
       <body className="min-h-[100dvh] flex flex-col bg-white text-text-primary">
         <NextIntlClientProvider messages={messages}>
+          <GoogleAnalytics measurementId={settings.ga_measurement_id} />
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />

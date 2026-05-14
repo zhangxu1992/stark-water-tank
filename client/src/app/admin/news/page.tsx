@@ -40,6 +40,14 @@ export default function NewsAdminPage() {
     finally { setLoading(false); }
   }
 
+  async function handleTogglePublished(id: string, current: boolean) {
+    const token = getToken();
+    try {
+      await apiClient.put(`/api/news/${id}`, { isPublished: !current }, token!);
+      setItems(prev => prev.map(item => item.id === id ? { ...item, isPublished: !current } : item));
+    } catch {}
+  }
+
   async function handleDelete(id: string, slug: string) {
     if (!confirm(`Delete "${slug}"?`)) return;
     const token = getToken();
@@ -83,8 +91,13 @@ export default function NewsAdminPage() {
                 <td className="px-6 py-4"><span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${n.isPublished?'bg-green-50 text-green-700':'bg-gray-100 text-gray-600'}`}>{n.isPublished?'Published':'Draft'}</span></td>
                 <td className="px-6 py-4 text-sm text-text-secondary">{new Date(n.createdAt).toLocaleDateString()}</td>
                 <td className="px-6 py-4 text-right">
-                  <button onClick={()=>router.push(`/admin/news/${n.id}`)} className="px-3 py-1.5 text-xs font-medium text-text-secondary hover:text-primary hover:bg-bg-alt rounded-lg">Edit</button>
-                  <button onClick={()=>handleDelete(n.id,n.slug)} className="ml-2 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 rounded-lg">Delete</button>
+                  <div className="flex items-center justify-end gap-2">
+                    <button onClick={() => handleTogglePublished(n.id, n.isPublished)} className={`w-8 h-5 rounded-full relative transition-colors ${n.isPublished ? 'bg-green-500' : 'bg-gray-300'}`} title={n.isPublished ? 'Published — click to unpublish' : 'Draft — click to publish'}>
+                      <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform ${n.isPublished ? 'left-3.5' : 'left-0.5'}`} />
+                    </button>
+                    <button onClick={()=>router.push(`/admin/news/${n.id}`)} className="px-3 py-1.5 text-xs font-medium text-text-secondary hover:text-primary hover:bg-bg-alt rounded-lg">Edit</button>
+                    <button onClick={()=>handleDelete(n.id,n.slug)} className="px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 rounded-lg">Delete</button>
+                  </div>
                 </td>
               </tr>
             ))}

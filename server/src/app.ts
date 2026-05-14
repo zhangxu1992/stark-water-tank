@@ -49,6 +49,7 @@ app.use('/api/cases', caseRouter);
 app.use('/api/news', newsRouter);
 app.use('/api/faqs', faqRouter);
 app.use('/api/inquiries', inquiryRouter);
+app.use('/api/settings', settingsRouter);
 app.use('/api', settingsRouter);
 app.use('/api/seo', seoRouter);
 app.use('/api/dashboard', dashboardRouter);

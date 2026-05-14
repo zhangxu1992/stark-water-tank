@@ -64,6 +64,34 @@ export default function ProductsAdminPage() {
     } catch {}
   }
 
+  async function handleMoveUp(index: number) {
+    if (index === 0) return;
+    const a = products[index];
+    const b = products[index - 1];
+    const token = getToken();
+    try {
+      await Promise.all([
+        apiClient.put(`/api/products/${a.id}`, { sortOrder: b.sortOrder }, token!),
+        apiClient.put(`/api/products/${b.id}`, { sortOrder: a.sortOrder }, token!),
+      ]);
+      loadData();
+    } catch {}
+  }
+
+  async function handleMoveDown(index: number) {
+    if (index >= products.length - 1) return;
+    const a = products[index];
+    const b = products[index + 1];
+    const token = getToken();
+    try {
+      await Promise.all([
+        apiClient.put(`/api/products/${a.id}`, { sortOrder: b.sortOrder }, token!),
+        apiClient.put(`/api/products/${b.id}`, { sortOrder: a.sortOrder }, token!),
+      ]);
+      loadData();
+    } catch {}
+  }
+
   async function handleDelete(id: string, slug: string) {
     if (!confirm(`Delete product "${slug}"?`)) return;
     const token = getToken();
@@ -136,7 +164,7 @@ export default function ProductsAdminPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
-            {products.map((prod) => (
+            {products.map((prod, idx) => (
               <tr key={prod.id} className="hover:bg-bg-alt/50 transition-colors">
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
@@ -159,7 +187,13 @@ export default function ProductsAdminPage() {
                   {new Date(prod.createdAt).toLocaleDateString()}
                 </td>
                 <td className="px-6 py-4 text-right">
-                  <div className="flex items-center justify-end gap-2">
+                  <div className="flex items-center justify-end gap-1">
+                    <button onClick={() => handleMoveUp(idx)} disabled={idx === 0} className="w-7 h-7 flex items-center justify-center rounded text-text-secondary hover:text-primary hover:bg-bg-alt disabled:opacity-30 disabled:cursor-not-allowed" title="Move up">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 15l-6-6-6 6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    </button>
+                    <button onClick={() => handleMoveDown(idx)} disabled={idx === products.length - 1} className="w-7 h-7 flex items-center justify-center rounded text-text-secondary hover:text-primary hover:bg-bg-alt disabled:opacity-30 disabled:cursor-not-allowed" title="Move down">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    </button>
                     <button onClick={() => handleTogglePublished(prod.id, prod.isPublished)} className={`w-8 h-5 rounded-full relative transition-colors ${prod.isPublished ? 'bg-green-500' : 'bg-gray-300'}`} title={prod.isPublished ? 'Published — click to unpublish' : 'Draft — click to publish'}>
                       <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform ${prod.isPublished ? 'left-3.5' : 'left-0.5'}`} />
                     </button>
