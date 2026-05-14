@@ -35,7 +35,7 @@ export default function Footer() {
       <div className="max-w-[1400px] mx-auto px-4 md:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           <div>
-            <img src="/images/logo-white.png" alt="STARK" className="h-8 w-auto mb-4" />
+            <img src={`${API}/uploads/logo-white.png`} alt="STARK" className="h-8 w-auto mb-4" />
             <p className="text-sm text-slate-400 leading-relaxed max-w-[65ch]">{t('about')}</p>
           </div>
           <div>

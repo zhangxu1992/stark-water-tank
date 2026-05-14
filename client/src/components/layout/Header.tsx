@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
+
+const API = process.env.NEXT_PUBLIC_API_URL || '';
 import LanguageSwitcher from './LanguageSwitcher';
 
 export default function Header() {
@@ -23,7 +25,7 @@ export default function Header() {
       <div className="max-w-[1400px] mx-auto px-4 md:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="flex items-center gap-2 shrink-0">
-            <img src="/images/logo-blue.webp" alt="STARK" className="h-9 w-auto" />
+            <img src={`${API}/uploads/logo-blue.webp`} alt="STARK" className="h-9 w-auto" />
           </Link>
 
           <nav className="hidden lg:flex items-center gap-1">

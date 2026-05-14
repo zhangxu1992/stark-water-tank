@@ -53,7 +53,7 @@ export default function ContactPage() {
       {/* Hero */}
       <section
         className="relative py-24 md:py-32 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: 'url(/images/contact-hero.webp)' }}
+        style={{ backgroundImage: `url(${API}/uploads/contact-hero.webp)` }}
       >
         <div className="absolute inset-0 bg-primary/80" />
         <div className="relative max-w-[1400px] mx-auto px-4 text-center">
@@ -125,7 +125,7 @@ export default function ContactPage() {
           <h2 className="text-2xl font-semibold text-center mb-8">{t('ourLocation')}</h2>
           <div className="rounded-2xl overflow-hidden border border-border shadow-sm">
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3692.5!2d113.78!3d23.04!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjPCsDAyJzI0LjAiTiAxMTPCsDQ2JzQ4LjAiRQ!5e0!3m2!1sen!2sus!4v1700000000000"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3692.6!2d113.7609!3d22.9523!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x315462b1a14a8e3b%3A0x4e8e8c2e5e3a7b2a!2z5aSn5bqm5biC5p2x5Z-O5Yy65a2m6Zmi6LevMjblj7c!5e0!3m2!1szh!2scn!4v1715773600000"
               width="100%" height="400" style={{ border: 0 }} allowFullScreen loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
               title="STARK Location"
