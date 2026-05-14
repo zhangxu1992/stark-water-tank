@@ -19,6 +19,24 @@ export default async function AboutPage({ params }: { params: Promise<{ lang: st
 
   return (
     <div>
+      {/* FAQPage Schema */}
+      {faqs.length > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'FAQPage',
+              mainEntity: faqs.map((faq: any) => {
+                const q = getTranslation(faq.translations, lang, 'question');
+                const a = getTranslation(faq.translations, lang, 'answer');
+                return { '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } };
+              }),
+            }),
+          }}
+        />
+      )}
+
       <section className="bg-primary py-16 md:py-20">
         <div className="max-w-[1400px] mx-auto px-4 text-center">
           <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight">{t('title')}</h1>
