@@ -72,7 +72,13 @@
     "subtitle": "Learn about STARK Environmental Solutions",
     "ourStory": "Our Story",
     "factoryStrength": "Factory Strength",
-    "faq": "Frequently Asked Questions"
+    "faq": "Frequently Asked Questions",
+    "factoryTeam": "Professional Team",
+    "factoryTeamDesc": "Experienced engineers and technicians dedicated to water treatment solutions.",
+    "factoryFacility": "Modern Facility",
+    "factoryFacilityDesc": "State-of-the-art manufacturing facility in Dongguan, Guangdong.",
+    "factoryQuality": "Quality Control",
+    "factoryQualityDesc": "Strict quality management system ensuring every product meets international standards."
   },
   "contact": {
     "title": "Contact Us",

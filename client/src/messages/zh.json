@@ -72,7 +72,13 @@
     "subtitle": "了解STARK环保科技",
     "ourStory": "我们的故事",
     "factoryStrength": "工厂实力",
-    "faq": "常见问题"
+    "faq": "常见问题",
+    "factoryTeam": "专业团队",
+    "factoryTeamDesc": "经验丰富的工程师和技术人员，专注水处理解决方案。",
+    "factoryFacility": "现代化工厂",
+    "factoryFacilityDesc": "位于广东东莞的现代化制造工厂。",
+    "factoryQuality": "质量控制",
+    "factoryQualityDesc": "严格的质量管理体系，确保每件产品符合国际标准。"
   },
   "contact": {
     "title": "联系我们",

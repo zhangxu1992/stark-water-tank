@@ -1,6 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { getTranslation } from '@/lib/translate';
+import { LazyImage, PlaceholderImage } from '@/components/ui/PlaceholderImage';
 
 const API = process.env.SERVER_API_URL || 'http://127.0.0.1:3001';
 
@@ -42,7 +43,7 @@ export default async function NewsPage({ params, searchParams }: { params: Promi
               {news.map((n: any) => (
                 <Link key={n.id} href={`/news/${n.slug}`} className="group bg-white rounded-2xl border border-border shadow-sm hover:shadow-md transition-all overflow-hidden">
                   <div className="aspect-[16/9] bg-bg-alt overflow-hidden">
-                    {n.coverImage ? <img src={`${API}${n.coverImage}`} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"/> : <div className="w-full h-full flex items-center justify-center text-text-secondary">No Image</div>}
+                    {n.coverImage ? <LazyImage src={`${API}${n.coverImage}`} alt={getTranslation(n.translations, lang, 'title')} className="group-hover:scale-105 transition-transform duration-300"/> : <PlaceholderImage type="news" className="w-full h-full" />}
                   </div>
                   <div className="p-5">
                     <div className="text-xs text-accent mb-1">{getTranslation(n.category?.translations || '{}', lang, 'name') || n.category?.name}</div>

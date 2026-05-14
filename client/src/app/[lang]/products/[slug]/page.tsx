@@ -2,6 +2,7 @@ import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getTranslation } from '@/lib/translate';
+import { LazyImage, PlaceholderImage } from '@/components/ui/PlaceholderImage';
 
 const API = process.env.SERVER_API_URL || 'http://127.0.0.1:3001';
 
@@ -67,16 +68,16 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             <div>
               <div className="aspect-[4/3] rounded-2xl bg-bg-alt overflow-hidden mb-4">
                 {images[0] ? (
-                  <img src={`${API}${images[0]}`} alt={name} className="w-full h-full object-cover" />
+                  <LazyImage src={`${API}${images[0]}`} alt={name} />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-text-secondary">No Image</div>
+                  <PlaceholderImage type="product" className="w-full h-full" />
                 )}
               </div>
               {images.length > 1 && (
                 <div className="grid grid-cols-4 gap-3">
                   {images.slice(1, 5).map((img: string, i: number) => (
                     <div key={i} className="aspect-square rounded-xl bg-bg-alt overflow-hidden">
-                      <img src={`${API}${img}`} alt="" className="w-full h-full object-cover" />
+                      <LazyImage src={`${API}${img}`} alt="" />
                     </div>
                   ))}
                 </div>
@@ -129,10 +130,40 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                   {t('inquiryForProduct')}
                 </Link>
               </div>
+
+              {/* Prev/Next */}
+              <PrevNextNav slug={slug} lang={lang} />
             </div>
           </div>
         </div>
       </section>
     </div>
   );
+}
+
+async function PrevNextNav({ slug, lang }: { slug: string; lang: string }) {
+  try {
+    const r = await fetch(`${process.env.SERVER_API_URL || 'http://127.0.0.1:3001'}/api/products?limit=2`);
+    const d = await r.json();
+    const items = d.items || [];
+    if (items.length < 2) return null;
+    const idx = items.findIndex((p: any) => p.slug === slug);
+    if (idx === -1) return null;
+    const prev = idx > 0 ? items[idx - 1] : null;
+    const next = idx < items.length - 1 ? items[idx + 1] : null;
+    return (
+      <div className="flex gap-4 mt-8 pt-6 border-t border-border">
+        {prev && (
+          <Link href={`/products/${prev.slug}`} className="flex-1 text-sm text-text-secondary hover:text-primary">
+            ← {getTranslation(prev.translations, lang, 'name')}
+          </Link>
+        )}
+        {next && (
+          <Link href={`/products/${next.slug}`} className="flex-1 text-right text-sm text-text-secondary hover:text-primary">
+            {getTranslation(next.translations, lang, 'name')} →
+          </Link>
+        )}
+      </div>
+    );
+  } catch { return null; }
 }

@@ -62,9 +62,9 @@ export default async function AboutPage({ params }: { params: Promise<{ lang: st
           <h2 className="text-2xl md:text-3xl font-semibold tracking-tight text-center mb-12">{t('factoryStrength')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
             {[
-              { title: 'Professional Team', desc: 'Experienced engineers and technicians dedicated to water treatment solutions.' },
-              { title: 'Modern Facility', desc: 'State-of-the-art manufacturing facility in Dongguan, Guangdong.' },
-              { title: 'Quality Control', desc: 'Strict quality management system ensuring every product meets international standards.' },
+              { title: t('factoryTeam'), desc: t('factoryTeamDesc') },
+              { title: t('factoryFacility'), desc: t('factoryFacilityDesc') },
+              { title: t('factoryQuality'), desc: t('factoryQualityDesc') },
             ].map(item => (
               <div key={item.title} className="bg-white p-8 rounded-2xl border border-border shadow-sm text-center">
                 <h3 className="font-semibold text-text-primary mb-2">{item.title}</h3>

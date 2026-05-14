@@ -2,6 +2,7 @@ import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getTranslation } from '@/lib/translate';
+import { LazyImage, PlaceholderImage } from '@/components/ui/PlaceholderImage';
 
 const API = process.env.SERVER_API_URL || 'http://127.0.0.1:3001';
 
@@ -57,14 +58,44 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ slu
 
             {article.coverImage && (
               <div className="aspect-[16/9] rounded-2xl bg-bg-alt overflow-hidden mb-8">
-                <img src={`${API}${article.coverImage}`} alt="" className="w-full h-full object-cover"/>
+                <LazyImage src={`${API}${article.coverImage}`} alt={title} />
               </div>
             )}
 
             <div className="prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: (content || summary).replace(/\n/g, '<br/>') }} />
           </article>
+
+          <RelatedNews slug={slug} lang={lang} />
         </div>
       </section>
     </div>
   );
+}
+
+async function RelatedNews({ slug, lang }: { slug: string; lang: string }) {
+  try {
+    const API = process.env.SERVER_API_URL || 'http://127.0.0.1:3001';
+    const r = await fetch(`${API}/api/news?limit=4`);
+    const d = await r.json();
+    const items = (d.items || []).filter((n: any) => n.slug !== slug).slice(0, 3);
+    if (items.length === 0) return null;
+    return (
+      <>
+        <hr className="my-12 border-border" />
+        <h2 className="text-2xl font-semibold mb-6">Related News</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {items.map((n: any) => (
+            <Link key={n.id} href={`/news/${n.slug}`} className="group bg-white rounded-2xl border border-border shadow-sm hover:shadow-md transition-all overflow-hidden">
+              <div className="aspect-[16/9] bg-bg-alt overflow-hidden">
+                {n.coverImage ? <img src={`${API}${n.coverImage}`} alt="" loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"/> : <PlaceholderImage type="news" className="w-full h-full" />}
+              </div>
+              <div className="p-4">
+                <h3 className="font-semibold text-sm group-hover:text-accent transition-colors">{getTranslation(n.translations, lang, 'title')}</h3>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </>
+    );
+  } catch { return null; }
 }

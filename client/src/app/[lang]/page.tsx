@@ -1,6 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { getTranslation } from '@/lib/translate';
+import { LazyImage, PlaceholderImage } from '@/components/ui/PlaceholderImage';
 
 const API = process.env.SERVER_API_URL || 'http://127.0.0.1:3001';
 
@@ -109,9 +110,9 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
                 <Link key={p.id} href={`/products/${p.slug}`} className="group bg-white rounded-2xl border border-border shadow-sm hover:shadow-md transition-all overflow-hidden">
                   <div className="aspect-[4/3] bg-bg-alt overflow-hidden">
                     {p.coverImage ? (
-                      <img src={`${API}${p.coverImage}`} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                      <LazyImage src={`${API}${p.coverImage}`} alt={getTranslation(p.translations, lang, 'name')} className="group-hover:scale-105 transition-transform duration-300" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-text-secondary text-sm">No Image</div>
+                      <PlaceholderImage type="product" className="w-full h-full" />
                     )}
                   </div>
                   <div className="p-4">
@@ -138,9 +139,9 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
                 <Link key={c.id} href={`/cases/${c.slug}`} className="group bg-white rounded-2xl border border-border shadow-sm hover:shadow-md transition-all overflow-hidden">
                   <div className="aspect-[16/9] bg-bg-alt overflow-hidden">
                     {c.coverImage ? (
-                      <img src={`${API}${c.coverImage}`} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                      <LazyImage src={`${API}${c.coverImage}`} alt={getTranslation(c.translations, lang, 'name')} className="group-hover:scale-105 transition-transform duration-300" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-text-secondary text-sm">No Image</div>
+                      <PlaceholderImage type="case" className="w-full h-full" />
                     )}
                   </div>
                   <div className="p-5">
