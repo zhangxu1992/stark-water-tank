@@ -17,10 +17,13 @@ export async function generateMetadata({ params }: Props) {
   if (!item) return { title: 'Case Not Found' };
   const t = JSON.parse(item.translations || '{}');
   const en = t.en || {};
+  const title = item.metaTitle || en.name;
+  const desc = item.metaDescription || en.description?.slice(0, 160);
   return {
-    title: en.name,
-    description: en.description?.slice(0, 160),
-    openGraph: { title: en.name, description: en.description?.slice(0, 160) },
+    title,
+    description: desc,
+    keywords: item.metaKeywords || '',
+    openGraph: { title, description: desc },
   };
 }
 

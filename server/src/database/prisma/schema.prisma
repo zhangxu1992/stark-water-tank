@@ -72,6 +72,9 @@ model Product {
   industries   String          @default("[]") // JSON: ["Food & Beverage", "Chemical", ...]
   images       String          @default("[]") // JSON: ["/uploads/xxx.jpg", ...]
   coverImage   String?         @map("cover_image")
+  metaTitle       String?         @map("meta_title")
+  metaDescription String?         @map("meta_description")
+  metaKeywords    String?         @map("meta_keywords")
   isPublished  Boolean         @default(true) @map("is_published")
   sortOrder    Int             @default(0) @map("sort_order")
   createdAt    DateTime        @default(now()) @map("created_at")
@@ -86,6 +89,9 @@ model Case {
   translations String   @default("{}") // JSON: {en:{name,description,content}, zh:{name,description,content}, ...}
   images       String   @default("[]") // JSON: ["/uploads/xxx.jpg", ...]
   coverImage   String?  @map("cover_image")
+  metaTitle       String? @map("meta_title")
+  metaDescription String? @map("meta_description")
+  metaKeywords    String? @map("meta_keywords")
   isPublished  Boolean  @default(true) @map("is_published")
   sortOrder    Int      @default(0) @map("sort_order")
   createdAt    DateTime @default(now()) @map("created_at")
@@ -112,7 +118,10 @@ model News {
   category     NewsCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   slug         String       @unique
   translations String       @default("{}") // JSON: {en:{title,summary,content}, zh:{title,summary,content}, ...}
-  coverImage   String?      @map("cover_image")
+  coverImage   String?    @map("cover_image")
+  metaTitle       String?  @map("meta_title")
+  metaDescription String?  @map("meta_description")
+  metaKeywords    String?  @map("meta_keywords")
   isPublished  Boolean      @default(true) @map("is_published")
   publishedAt  DateTime?    @map("published_at")
   createdAt    DateTime     @default(now()) @map("created_at")

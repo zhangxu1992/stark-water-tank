@@ -37,6 +37,7 @@ import newsRouter from './features/news/news.controller';
 import faqRouter from './features/faqs/faq.controller';
 import inquiryRouter from './features/inquiries/inquiry.controller';
 import settingsRouter from './features/settings/settings.controller';
+import seoRouter from './features/seo/seo.controller';
 import uploadRouter from './features/upload/upload.controller';
 
 app.use('/api/auth', authRouter);
@@ -47,6 +48,7 @@ app.use('/api/news', newsRouter);
 app.use('/api/faqs', faqRouter);
 app.use('/api/inquiries', inquiryRouter);
 app.use('/api', settingsRouter);
+app.use('/api/seo', seoRouter);
 app.use('/api/upload', uploadRouter);
 
 // --- Error Handler (must be last) ---

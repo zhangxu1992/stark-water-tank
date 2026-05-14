@@ -49,29 +49,4 @@ router.put('/languages/:code', authMiddleware, async (req: Request, res: Respons
   } catch (err) { next(err); }
 });
 
-// GET /api/seo (public)
-router.get('/seo', async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { page_path, language } = req.query;
-    const where: any = {};
-    if (page_path) where.pagePath = page_path;
-    if (language) where.language = language;
-    const items = await prisma.seoMeta.findMany({ where });
-    res.json(items);
-  } catch (err) { next(err); }
-});
-
-// PUT /api/seo (admin)
-router.put('/seo', authMiddleware, async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { pagePath, language, ...data } = req.body;
-    const item = await prisma.seoMeta.upsert({
-      where: { pagePath_language: { pagePath, language } },
-      update: data,
-      create: { pagePath, language, ...data },
-    });
-    res.json(item);
-  } catch (err) { next(err); }
-});
-
 export default router;

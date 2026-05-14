@@ -33,6 +33,10 @@ export default function ProductFormPage({ params }: { params: Promise<{ id: stri
   const [industries, setIndustries] = useState<string[]>([]);
   const [industryInput, setIndustryInput] = useState('');
   const [images, setImages] = useState<string[]>([]);
+  const [metaTitle, setMetaTitle] = useState('');
+  const [metaDesc, setMetaDesc] = useState('');
+  const [metaKeywords, setMetaKeywords] = useState('');
+  const [showSeo, setShowSeo] = useState(false);
   const [isPublished, setIsPublished] = useState(true);
   const [sortOrder, setSortOrder] = useState(0);
 
@@ -75,6 +79,11 @@ export default function ProductFormPage({ params }: { params: Promise<{ id: stri
 
       setParameters(JSON.parse(product.parameters || '[]'));
       setIndustries(JSON.parse(product.industries || '[]'));
+
+      setMetaTitle(product.metaTitle || '');
+      setMetaDesc(product.metaDescription || '');
+      setMetaKeywords(product.metaKeywords || '');
+      if (product.metaTitle) setShowSeo(true);
     } catch (err) {
       setError('Failed to load product');
     } finally {
@@ -98,6 +107,9 @@ export default function ProductFormPage({ params }: { params: Promise<{ id: stri
       industries,
       images,
       coverImage: images[0] || null,
+      metaTitle: metaTitle || null,
+      metaDescription: metaDesc || null,
+      metaKeywords: metaKeywords || null,
       isPublished,
       sortOrder,
     };
@@ -330,6 +342,21 @@ export default function ProductFormPage({ params }: { params: Promise<{ id: stri
               </span>
             ))}
           </div>
+        </div>
+
+        {/* SEO */}
+        <div className="bg-white rounded-2xl border border-border shadow-sm p-6 space-y-4">
+          <button type="button" onClick={() => setShowSeo(!showSeo)} className="flex items-center gap-2 text-sm text-text-secondary hover:text-primary transition-colors">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`transition-transform ${showSeo ? 'rotate-90' : ''}`}><path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            SEO Information (Meta Title / Description / Keywords)
+          </button>
+          {showSeo && (
+            <div className="space-y-3 pt-2">
+              <div><label className="block text-sm font-medium mb-1">Meta Title</label><input value={metaTitle} onChange={e => setMetaTitle(e.target.value)} className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent/50" /></div>
+              <div><label className="block text-sm font-medium mb-1">Meta Description</label><textarea value={metaDesc} onChange={e => setMetaDesc(e.target.value)} rows={3} className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 resize-y" /></div>
+              <div><label className="block text-sm font-medium mb-1">Meta Keywords</label><input value={metaKeywords} onChange={e => setMetaKeywords(e.target.value)} className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent/50" placeholder="water tank, stainless steel, RO system" /></div>
+            </div>
+          )}
         </div>
 
         {/* Settings */}

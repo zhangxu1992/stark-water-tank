@@ -31,6 +31,9 @@ export class ProductService {
       industries: JSON.stringify(input.industries),
       images: JSON.stringify(input.images),
       coverImage: input.coverImage,
+      metaTitle: input.metaTitle,
+      metaDescription: input.metaDescription,
+      metaKeywords: input.metaKeywords,
       isPublished: input.isPublished,
       sortOrder: input.sortOrder,
     });
@@ -53,6 +56,9 @@ export class ProductService {
     if (input.industries !== undefined) data.industries = JSON.stringify(input.industries);
     if (input.images !== undefined) data.images = JSON.stringify(input.images);
     if (input.coverImage !== undefined) data.coverImage = input.coverImage;
+    if (input.metaTitle !== undefined) data.metaTitle = input.metaTitle;
+    if (input.metaDescription !== undefined) data.metaDescription = input.metaDescription;
+    if (input.metaKeywords !== undefined) data.metaKeywords = input.metaKeywords;
     if (input.isPublished !== undefined) data.isPublished = input.isPublished;
     if (input.sortOrder !== undefined) data.sortOrder = input.sortOrder;
 

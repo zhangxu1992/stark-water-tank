@@ -21,10 +21,13 @@ export async function generateMetadata({ params }: Props) {
   if (!product) return { title: 'Product Not Found' };
   const t = JSON.parse(product.translations || '{}');
   const en = t.en || {};
+  const title = product.metaTitle || en.name;
+  const desc = product.metaDescription || en.description?.slice(0, 160);
   return {
-    title: en.name,
-    description: en.description?.slice(0, 160),
-    openGraph: { title: en.name, description: en.description?.slice(0, 160) },
+    title,
+    description: desc,
+    keywords: product.metaKeywords || '',
+    openGraph: { title, description: desc },
   };
 }
 

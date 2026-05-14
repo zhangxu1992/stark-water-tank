@@ -11,6 +11,9 @@ export const createCaseSchema = z.object({
   translations: z.record(caseTranslationSchema).default({ en: { name: '', description: '', content: '' } }),
   images: z.array(z.string()).default([]),
   coverImage: z.string().nullable().default(null),
+  metaTitle: z.string().nullable().default(null),
+  metaDescription: z.string().nullable().default(null),
+  metaKeywords: z.string().nullable().default(null),
   isPublished: z.boolean().default(true),
   sortOrder: z.number().int().default(0),
 });

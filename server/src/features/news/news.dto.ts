@@ -11,6 +11,9 @@ export const createNewsSchema = z.object({
   slug: z.string().min(1).regex(/^[a-z0-9-]+(-[a-z0-9-]+)*$/),
   translations: z.record(newsTranslationSchema).default({ en: { title: '', summary: '', content: '' } }),
   coverImage: z.string().nullable().default(null),
+  metaTitle: z.string().nullable().default(null),
+  metaDescription: z.string().nullable().default(null),
+  metaKeywords: z.string().nullable().default(null),
   isPublished: z.boolean().default(true),
   publishedAt: z.string().nullable().default(null),
 });

@@ -22,6 +22,10 @@ export default function NewsFormPage({ params }: { params: Promise<{ id: string 
   const [titleZh, setTitleZh] = useState(''); const [summaryZh, setSummaryZh] = useState(''); const [contentZh, setContentZh] = useState('');
   const [showZh, setShowZh] = useState(false);
   const [coverImage, setCoverImage] = useState<string|null>(null);
+  const [metaTitle, setMetaTitle] = useState('');
+  const [metaDesc, setMetaDesc] = useState('');
+  const [metaKeywords, setMetaKeywords] = useState('');
+  const [showSeo, setShowSeo] = useState(false);
   const [isPublished, setIsPublished] = useState(true);
   const [publishedAt, setPublishedAt] = useState(new Date().toISOString().slice(0,10));
 
@@ -42,12 +46,16 @@ export default function NewsFormPage({ params }: { params: Promise<{ id: string 
       setTitleEn(t.en?.title||''); setSummaryEn(t.en?.summary||''); setContentEn(t.en?.content||'');
       setTitleZh(t.zh?.title||''); setSummaryZh(t.zh?.summary||''); setContentZh(t.zh?.content||'');
       if (t.zh?.title) setShowZh(true);
+      setMetaTitle(n.metaTitle||''); setMetaDesc(n.metaDescription||''); setMetaKeywords(n.metaKeywords||'');
+      if (n.metaTitle) setShowSeo(true);
     } catch(e){setError('Failed');} finally {setLoading(false);}
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault(); setSaving(true); setError('');
-    const data = { categoryId, slug, translations:{en:{title:titleEn,summary:summaryEn,content:contentEn},zh:{title:titleZh,summary:summaryZh,content:contentZh}}, coverImage, isPublished, publishedAt };
+    const data = { categoryId, slug, translations:{en:{title:titleEn,summary:summaryEn,content:contentEn},zh:{title:titleZh,summary:summaryZh,content:contentZh}}, coverImage,
+      metaTitle: metaTitle || null, metaDescription: metaDesc || null, metaKeywords: metaKeywords || null,
+      isPublished, publishedAt };
     try {
       if(isNew) await apiClient.post('/api/news', data, getToken()!);
       else await apiClient.put(`/api/news/${id}`, data, getToken()!);
@@ -94,6 +102,20 @@ export default function NewsFormPage({ params }: { params: Promise<{ id: string 
           <h2 className="text-lg font-semibold">Cover Image</h2>
           <ImageUploader images={coverImage?[coverImage]:[]} onChange={(imgs)=>setCoverImage(imgs[0]||null)} max={1}/>
         </div>
+        <div className="bg-white rounded-2xl border border-border shadow-sm p-6 space-y-4">
+          <button type="button" onClick={() => setShowSeo(!showSeo)} className="flex items-center gap-2 text-sm text-text-secondary hover:text-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`transition-transform ${showSeo ? 'rotate-90' : ''}`}><path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            SEO Information
+          </button>
+          {showSeo && (
+            <div className="space-y-3 pt-2">
+              <div><label className="block text-sm font-medium mb-1">Meta Title</label><input value={metaTitle} onChange={e => setMetaTitle(e.target.value)} className={f} /></div>
+              <div><label className="block text-sm font-medium mb-1">Meta Description</label><textarea value={metaDesc} onChange={e => setMetaDesc(e.target.value)} rows={3} className={f} /></div>
+              <div><label className="block text-sm font-medium mb-1">Meta Keywords</label><input value={metaKeywords} onChange={e => setMetaKeywords(e.target.value)} className={f} /></div>
+            </div>
+          )}
+        </div>
+
         <div className="bg-white rounded-2xl border border-border shadow-sm p-6 space-y-4">
           <h2 className="text-lg font-semibold">Settings</h2>
           <div className="flex flex-wrap gap-6">

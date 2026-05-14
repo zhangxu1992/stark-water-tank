@@ -28,6 +28,9 @@ export class NewsService {
       slug: input.slug,
       translations: JSON.stringify(input.translations),
       coverImage: input.coverImage,
+      metaTitle: input.metaTitle,
+      metaDescription: input.metaDescription,
+      metaKeywords: input.metaKeywords,
       isPublished: input.isPublished,
       publishedAt: input.publishedAt ? new Date(input.publishedAt) : new Date(),
     });
@@ -47,6 +50,9 @@ export class NewsService {
     if (input.slug !== undefined) data.slug = input.slug;
     if (input.translations !== undefined) data.translations = JSON.stringify(input.translations);
     if (input.coverImage !== undefined) data.coverImage = input.coverImage;
+    if (input.metaTitle !== undefined) data.metaTitle = input.metaTitle;
+    if (input.metaDescription !== undefined) data.metaDescription = input.metaDescription;
+    if (input.metaKeywords !== undefined) data.metaKeywords = input.metaKeywords;
     if (input.isPublished !== undefined) data.isPublished = input.isPublished;
     if (input.publishedAt !== undefined) data.publishedAt = input.publishedAt ? new Date(input.publishedAt) : undefined;
 

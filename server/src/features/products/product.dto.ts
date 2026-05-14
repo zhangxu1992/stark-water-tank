@@ -19,6 +19,9 @@ export const createProductSchema = z.object({
   industries: z.array(z.string()).default([]),
   images: z.array(z.string()).default([]),
   coverImage: z.string().nullable().default(null),
+  metaTitle: z.string().nullable().default(null),
+  metaDescription: z.string().nullable().default(null),
+  metaKeywords: z.string().nullable().default(null),
   isPublished: z.boolean().default(true),
   sortOrder: z.number().int().default(0),
 });

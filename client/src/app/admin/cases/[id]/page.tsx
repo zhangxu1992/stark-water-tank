@@ -24,6 +24,10 @@ export default function CaseFormPage({ params }: { params: Promise<{ id: string 
   const [contentZh, setContentZh] = useState('');
   const [showZh, setShowZh] = useState(false);
   const [images, setImages] = useState<string[]>([]);
+  const [metaTitle, setMetaTitle] = useState('');
+  const [metaDesc, setMetaDesc] = useState('');
+  const [metaKeywords, setMetaKeywords] = useState('');
+  const [showSeo, setShowSeo] = useState(false);
   const [isPublished, setIsPublished] = useState(true);
   const [sortOrder, setSortOrder] = useState(0);
 
@@ -43,6 +47,8 @@ export default function CaseFormPage({ params }: { params: Promise<{ id: string 
       setNameEn(t.en?.name || ''); setDescEn(t.en?.description || ''); setContentEn(t.en?.content || '');
       setNameZh(t.zh?.name || ''); setDescZh(t.zh?.description || ''); setContentZh(t.zh?.content || '');
       if (t.zh?.name) setShowZh(true);
+      setMetaTitle(item.metaTitle || ''); setMetaDesc(item.metaDescription || ''); setMetaKeywords(item.metaKeywords || '');
+      if (item.metaTitle) setShowSeo(true);
     } catch (err) { setError('Failed to load case'); }
     finally { setLoading(false); }
   }
@@ -53,7 +59,9 @@ export default function CaseFormPage({ params }: { params: Promise<{ id: string 
     const data = {
       slug,
       translations: { en: { name: nameEn, description: descEn, content: contentEn }, zh: { name: nameZh, description: descZh, content: contentZh } },
-      images, coverImage: images[0] || null, isPublished, sortOrder,
+      images, coverImage: images[0] || null,
+      metaTitle: metaTitle || null, metaDescription: metaDesc || null, metaKeywords: metaKeywords || null,
+      isPublished, sortOrder,
     };
     const token = getToken();
     try {
@@ -113,6 +121,20 @@ export default function CaseFormPage({ params }: { params: Promise<{ id: string 
         <div className="bg-white rounded-2xl border border-border shadow-sm p-6 space-y-4">
           <h2 className="text-lg font-semibold">Images</h2>
           <ImageUploader images={images} onChange={setImages} />
+        </div>
+
+        <div className="bg-white rounded-2xl border border-border shadow-sm p-6 space-y-4">
+          <button type="button" onClick={() => setShowSeo(!showSeo)} className="flex items-center gap-2 text-sm text-text-secondary hover:text-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`transition-transform ${showSeo ? 'rotate-90' : ''}`}><path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            SEO Information
+          </button>
+          {showSeo && (
+            <div className="space-y-3 pt-2">
+              <div><label className="block text-sm font-medium mb-1">Meta Title</label><input value={metaTitle} onChange={e => setMetaTitle(e.target.value)} className={f} /></div>
+              <div><label className="block text-sm font-medium mb-1">Meta Description</label><textarea value={metaDesc} onChange={e => setMetaDesc(e.target.value)} rows={3} className={f} /></div>
+              <div><label className="block text-sm font-medium mb-1">Meta Keywords</label><input value={metaKeywords} onChange={e => setMetaKeywords(e.target.value)} className={f} /></div>
+            </div>
+          )}
         </div>
 
         <div className="bg-white rounded-2xl border border-border shadow-sm p-6 space-y-4">

@@ -28,6 +28,9 @@ export class CaseService {
       translations: JSON.stringify(input.translations),
       images: JSON.stringify(input.images),
       coverImage: input.coverImage,
+      metaTitle: input.metaTitle,
+      metaDescription: input.metaDescription,
+      metaKeywords: input.metaKeywords,
       isPublished: input.isPublished,
       sortOrder: input.sortOrder,
     });
@@ -47,6 +50,9 @@ export class CaseService {
     if (input.translations !== undefined) data.translations = JSON.stringify(input.translations);
     if (input.images !== undefined) data.images = JSON.stringify(input.images);
     if (input.coverImage !== undefined) data.coverImage = input.coverImage;
+    if (input.metaTitle !== undefined) data.metaTitle = input.metaTitle;
+    if (input.metaDescription !== undefined) data.metaDescription = input.metaDescription;
+    if (input.metaKeywords !== undefined) data.metaKeywords = input.metaKeywords;
     if (input.isPublished !== undefined) data.isPublished = input.isPublished;
     if (input.sortOrder !== undefined) data.sortOrder = input.sortOrder;
 
