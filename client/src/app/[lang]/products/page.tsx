@@ -8,21 +8,22 @@ async function getCategories() {
   try { const r = await fetch(`${API}/api/categories?type=product`, { next: { revalidate: 300 } }); return await r.json(); } catch { return []; }
 }
 
-async function getProducts(categoryId?: string) {
+async function getProducts(categoryId?: string, page = 1) {
   try {
-    const url = `${API}/api/products?limit=12${categoryId ? `&categoryId=${categoryId}` : ''}`;
+    const url = `${API}/api/products?limit=12&page=${page}${categoryId ? `&categoryId=${categoryId}` : ''}`;
     const r = await fetch(url, { next: { revalidate: 60 } });
     const d = await r.json();
-    return d.items || [];
-  } catch { return []; }
+    return { items: d.items || [], total: d.total || 0, totalPages: d.totalPages || 0 };
+  } catch { return { items: [], total: 0, totalPages: 0 }; }
 }
 
-export default async function ProductsPage({ params, searchParams }: { params: Promise<{ lang: string }>; searchParams: Promise<{ category?: string }> }) {
+export default async function ProductsPage({ params, searchParams }: { params: Promise<{ lang: string }>; searchParams: Promise<{ category?: string; page?: string }> }) {
   const { lang } = await params;
-  const { category } = await searchParams;
+  const { category, page: pageStr } = await searchParams;
+  const page = parseInt(pageStr || '1');
   const t = await getTranslations('products');
   const common = await getTranslations('common');
-  const [categories, products] = await Promise.all([getCategories(), getProducts(category)]);
+  const [categories, { items: products, totalPages }] = await Promise.all([getCategories(), getProducts(category, page)]);
 
   return (
     <div>
@@ -76,6 +77,21 @@ export default async function ProductsPage({ params, searchParams }: { params: P
             </div>
           ) : (
             <p className="text-center text-text-secondary py-12">{common('noResults')}</p>
+          )}
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex justify-center gap-2 mt-10">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(pNum => (
+                <Link
+                  key={pNum}
+                  href={`/products?page=${pNum}${category ? `&category=${category}` : ''}`}
+                  className={`w-10 h-10 flex items-center justify-center rounded-lg text-sm font-medium transition-colors ${pNum === page ? 'bg-primary text-white' : 'bg-bg-alt text-text-secondary hover:bg-border'}`}
+                >
+                  {pNum}
+                </Link>
+              ))}
+            </div>
           )}
         </div>
       </section>
