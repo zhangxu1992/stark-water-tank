@@ -1,4 +1,5 @@
 import { getTranslations } from 'next-intl/server';
+import { getTranslation } from '@/lib/translate';
 
 const API = process.env.SERVER_API_URL || 'http://127.0.0.1:3001';
 
@@ -10,7 +11,8 @@ async function getSettings() {
   try { const r = await fetch(`${API}/api/settings`, { next: { revalidate: 300 } }); return await r.json(); } catch { return {}; }
 }
 
-export default async function AboutPage() {
+export default async function AboutPage({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
   const t = await getTranslations('about');
   const home = await getTranslations('home');
   const [faqs, settings] = await Promise.all([getFaqs(), getSettings()]);
@@ -62,17 +64,17 @@ export default async function AboutPage() {
             <h2 className="text-2xl md:text-3xl font-semibold tracking-tight text-center mb-12">{t('faq')}</h2>
             <div className="space-y-3">
               {faqs.map((faq: any) => {
-                const tr = JSON.parse(faq.translations || '{}');
-                const en = tr.en || {};
+                const question = getTranslation(faq.translations, lang, 'question');
+                const answer = getTranslation(faq.translations, lang, 'answer');
                 return (
                   <details key={faq.id} className="group bg-white rounded-xl border border-border shadow-sm">
                     <summary className="px-6 py-4 cursor-pointer font-medium text-text-primary hover:text-accent transition-colors list-none flex items-center justify-between">
-                      {en.question}
+                      {question}
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="group-open:rotate-180 transition-transform shrink-0 ml-4">
                         <path d="M6 9l6 6 6-6" strokeLinecap="round"/>
                       </svg>
                     </summary>
-                    <div className="px-6 pb-4 text-sm text-text-secondary leading-relaxed">{en.answer}</div>
+                    <div className="px-6 pb-4 text-sm text-text-secondary leading-relaxed">{answer}</div>
                   </details>
                 );
               })}

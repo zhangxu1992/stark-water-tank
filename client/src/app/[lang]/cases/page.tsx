@@ -1,16 +1,15 @@
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
+import { getTranslation } from '@/lib/translate';
 
 const API = process.env.SERVER_API_URL || 'http://127.0.0.1:3001';
 
 async function getCases() {
   try { const r = await fetch(`${API}/api/cases?limit=12`, { next: { revalidate: 300 } }); const d = await r.json(); return d.items || []; } catch { return []; }
 }
-function getName(item: any, field = 'name'): string {
-  try { const t = JSON.parse(item.translations || '{}'); return t.en?.[field] || ''; } catch { return ''; }
-}
 
-export default async function CasesPage() {
+export default async function CasesPage({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
   const t = await getTranslations('cases');
   const cases = await getCases();
 
@@ -32,8 +31,8 @@ export default async function CasesPage() {
                     {c.coverImage ? <img src={`${API}${c.coverImage}`} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"/> : <div className="w-full h-full flex items-center justify-center text-text-secondary">No Image</div>}
                   </div>
                   <div className="p-5">
-                    <h3 className="font-semibold group-hover:text-accent transition-colors">{getName(c)}</h3>
-                    <p className="text-sm text-text-secondary mt-2 line-clamp-2">{getName(c, 'description')}</p>
+                    <h3 className="font-semibold group-hover:text-accent transition-colors">{getTranslation(c.translations, lang, 'name')}</h3>
+                    <p className="text-sm text-text-secondary mt-2 line-clamp-2">{getTranslation(c.translations, lang, 'description')}</p>
                   </div>
                 </Link>
               ))}

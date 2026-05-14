@@ -18,13 +18,9 @@ export default function CategoriesAdminPage() {
   const [loading, setLoading] = useState(true);
   const [newName, setNewName] = useState('');
   const [newSlug, setNewSlug] = useState('');
-  const [newTrEn, setNewTrEn] = useState('');
-  const [newTrZh, setNewTrZh] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState('');
   const [editSlug, setEditSlug] = useState('');
-  const [editTrEn, setEditTrEn] = useState('');
-  const [editTrZh, setEditTrZh] = useState('');
   const token = getToken();
 
   useEffect(() => { loadCategories(activeType); }, [activeType]);
@@ -42,13 +38,8 @@ export default function CategoriesAdminPage() {
     resetEdit();
   }
 
-  function resetForm() {
-    setNewName(''); setNewSlug(''); setNewTrEn(''); setNewTrZh('');
-  }
-
-  function resetEdit() {
-    setEditingId(null); setEditName(''); setEditSlug(''); setEditTrEn(''); setEditTrZh('');
-  }
+  function resetForm() { setNewName(''); setNewSlug(''); }
+  function resetEdit() { setEditingId(null); setEditName(''); setEditSlug(''); }
 
   async function handleCreate() {
     if (!newName || !newSlug) return alert('Name and slug are required');
@@ -57,7 +48,7 @@ export default function CategoriesAdminPage() {
         type: activeType,
         name: newName,
         slug: newSlug,
-        translations: { en: newTrEn || newName, zh: newTrZh || newName },
+        translations: { en: newName },
         sortOrder: categories.length,
       }, token!);
       resetForm();
@@ -68,10 +59,8 @@ export default function CategoriesAdminPage() {
   function startEdit(c: any) {
     const tr = JSON.parse(c.translations || '{}');
     setEditingId(c.id);
-    setEditName(c.name);
+    setEditName(tr.en || c.name);
     setEditSlug(c.slug);
-    setEditTrEn(tr.en || '');
-    setEditTrZh(tr.zh || '');
   }
 
   async function handleUpdate() {
@@ -80,7 +69,7 @@ export default function CategoriesAdminPage() {
       await apiClient.put(`/api/categories/${editingId}?type=${activeType}`, {
         name: editName,
         slug: editSlug,
-        translations: { en: editTrEn, zh: editTrZh },
+        translations: { en: editName },
       }, token!);
       resetEdit();
       loadCategories(activeType);
@@ -93,6 +82,10 @@ export default function CategoriesAdminPage() {
       await apiClient.delete(`/api/categories/${id}?type=${activeType}`, token!);
       loadCategories(activeType);
     } catch (e: any) { alert(e.message); }
+  }
+
+  function getDisplayName(c: any) {
+    try { const t = JSON.parse(c.translations || '{}'); return t.en || c.name; } catch { return c.name; }
   }
 
   const fCls = "px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent/50";
@@ -126,14 +119,6 @@ export default function CategoriesAdminPage() {
             <label className="block text-xs text-text-secondary mb-1">Slug *</label>
             <input value={newSlug} onChange={e => setNewSlug(e.target.value)} className={fCls + ' w-full'} placeholder="water-tank"/>
           </div>
-          <div>
-            <label className="block text-xs text-text-secondary mb-1">Translation (EN)</label>
-            <input value={newTrEn} onChange={e => setNewTrEn(e.target.value)} className={fCls + ' w-full'} placeholder="Water Tank"/>
-          </div>
-          <div>
-            <label className="block text-xs text-text-secondary mb-1">Translation (ZH)</label>
-            <input value={newTrZh} onChange={e => setNewTrZh(e.target.value)} className={fCls + ' w-full'} placeholder="水箱"/>
-          </div>
         </div>
         <button onClick={handleCreate} className="px-6 py-2.5 bg-primary text-white font-medium rounded-lg hover:bg-primary-light transition-colors text-sm">Add Category</button>
       </div>
@@ -158,14 +143,6 @@ export default function CategoriesAdminPage() {
                       <label className="block text-xs text-text-secondary mb-1">Slug</label>
                       <input value={editSlug} onChange={e => setEditSlug(e.target.value)} className={fCls + ' w-full'}/>
                     </div>
-                    <div>
-                      <label className="block text-xs text-text-secondary mb-1">EN Translation</label>
-                      <input value={editTrEn} onChange={e => setEditTrEn(e.target.value)} className={fCls + ' w-full'}/>
-                    </div>
-                    <div>
-                      <label className="block text-xs text-text-secondary mb-1">ZH Translation</label>
-                      <input value={editTrZh} onChange={e => setEditTrZh(e.target.value)} className={fCls + ' w-full'}/>
-                    </div>
                   </div>
                   <div className="flex gap-2">
                     <button onClick={handleUpdate} className="px-4 py-1.5 bg-primary text-white text-sm rounded-lg hover:bg-primary-light">Save</button>
@@ -175,7 +152,7 @@ export default function CategoriesAdminPage() {
               ) : (
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <span className="font-medium text-text-primary">{c.name}</span>
+                    <span className="font-medium text-text-primary">{getDisplayName(c)}</span>
                     <span className="text-xs text-text-secondary">/{c.slug}</span>
                   </div>
                   <div className="flex items-center gap-2">

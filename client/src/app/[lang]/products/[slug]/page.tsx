@@ -1,6 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { getTranslation } from '@/lib/translate';
 
 const API = process.env.SERVER_API_URL || 'http://127.0.0.1:3001';
 
@@ -27,8 +28,8 @@ export async function generateMetadata({ params }: Props) {
   };
 }
 
-export default async function ProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
+export default async function ProductDetailPage({ params }: { params: Promise<{ slug: string; lang: string }> }) {
+  const { slug, lang } = await params;
   const product = await getProduct(slug);
   if (!product) notFound();
 
@@ -37,6 +38,10 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
   const translations = JSON.parse(product.translations || '{}');
   const en = translations.en || {};
+
+  // Resolve translated fields for current lang
+  const name = getTranslation(product.translations, lang, 'name');
+  const description = getTranslation(product.translations, lang, 'description');
   const parameters = JSON.parse(product.parameters || '[]');
   const industries = JSON.parse(product.industries || '[]');
   const images = JSON.parse(product.images || '[]');
@@ -51,7 +56,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             <span>/</span>
             <Link href="/products" className="hover:text-primary">{common('products')}</Link>
             <span>/</span>
-            <span className="text-text-primary">{en.name}</span>
+            <span className="text-text-primary">{name}</span>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -59,7 +64,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             <div>
               <div className="aspect-[4/3] rounded-2xl bg-bg-alt overflow-hidden mb-4">
                 {images[0] ? (
-                  <img src={`${API}${images[0]}`} alt={en.name} className="w-full h-full object-cover" />
+                  <img src={`${API}${images[0]}`} alt={name} className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-text-secondary">No Image</div>
                 )}
@@ -78,8 +83,8 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             {/* Info */}
             <div>
               <div className="text-sm text-accent font-medium mb-2">{product.category?.name}</div>
-              <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-text-primary">{en.name}</h1>
-              <p className="text-text-secondary mt-4 leading-relaxed">{en.description}</p>
+              <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-text-primary">{name}</h1>
+              <p className="text-text-secondary mt-4 leading-relaxed">{description}</p>
 
               {/* Parameters */}
               {parameters.length > 0 && (

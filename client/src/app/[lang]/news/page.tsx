@@ -1,5 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
+import { getTranslation } from '@/lib/translate';
 
 const API = process.env.SERVER_API_URL || 'http://127.0.0.1:3001';
 
@@ -13,11 +14,8 @@ async function getNews(categoryId?: string) {
   } catch { return []; }
 }
 
-function getTitle(item: any): string {
-  try { const t = JSON.parse(item.translations || '{}'); return t.en?.title || ''; } catch { return ''; }
-}
-
-export default async function NewsPage({ searchParams }: { searchParams: Promise<{ category?: string }> }) {
+export default async function NewsPage({ params, searchParams }: { params: Promise<{ lang: string }>; searchParams: Promise<{ category?: string }> }) {
+  const { lang } = await params;
   const { category } = await searchParams;
   const t = await getTranslations('news');
   const common = await getTranslations('common');
@@ -48,7 +46,7 @@ export default async function NewsPage({ searchParams }: { searchParams: Promise
                   </div>
                   <div className="p-5">
                     <div className="text-xs text-accent mb-1">{n.category?.name}</div>
-                    <h3 className="font-semibold group-hover:text-accent transition-colors">{getTitle(n)}</h3>
+                    <h3 className="font-semibold group-hover:text-accent transition-colors">{getTranslation(n.translations, lang, 'title')}</h3>
                     <div className="text-xs text-text-secondary mt-2">{new Date(n.publishedAt || n.createdAt).toLocaleDateString()}</div>
                   </div>
                 </Link>

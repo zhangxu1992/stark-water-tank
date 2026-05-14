@@ -28,6 +28,7 @@ export default function ProductFormPage({ params }: { params: Promise<{ id: stri
   const [descEn, setDescEn] = useState('');
   const [nameZh, setNameZh] = useState('');
   const [descZh, setDescZh] = useState('');
+  const [showZh, setShowZh] = useState(false);
   const [parameters, setParameters] = useState<{ key_en: string; key_zh: string; value: string }[]>([]);
   const [industries, setIndustries] = useState<string[]>([]);
   const [industryInput, setIndustryInput] = useState('');
@@ -207,9 +208,9 @@ export default function ProductFormPage({ params }: { params: Promise<{ id: stri
           </div>
         </div>
 
-        {/* English Translation */}
+        {/* English Content (primary) */}
         <div className="bg-white rounded-2xl border border-border shadow-sm p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-text-primary">English Content</h2>
+          <h2 className="text-lg font-semibold text-text-primary">Content (English)</h2>
 
           <div>
             <label className="block text-sm font-medium text-text-primary mb-1.5">Name *</label>
@@ -233,29 +234,28 @@ export default function ProductFormPage({ params }: { params: Promise<{ id: stri
           </div>
         </div>
 
-        {/* Chinese Translation */}
+        {/* Chinese Translation (optional, expandable) */}
         <div className="bg-white rounded-2xl border border-border shadow-sm p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-text-primary">Chinese Content</h2>
-
-          <div>
-            <label className="block text-sm font-medium text-text-primary mb-1.5">Name</label>
-            <input
-              type="text"
-              value={nameZh}
-              onChange={(e) => setNameZh(e.target.value)}
-              className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent/50"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-text-primary mb-1.5">Description</label>
-            <textarea
-              value={descZh}
-              onChange={(e) => setDescZh(e.target.value)}
-              rows={4}
-              className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 resize-y"
-            />
-          </div>
+          <button type="button" onClick={() => setShowZh(!showZh)} className="flex items-center gap-2 text-sm text-text-secondary hover:text-primary transition-colors">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`transition-transform ${showZh ? 'rotate-90' : ''}`}>
+              <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            Chinese Translation (optional, auto-fallbacks to English)
+          </button>
+          {showZh && (
+            <div className="space-y-4 pt-2">
+              <div>
+                <label className="block text-sm font-medium text-text-primary mb-1.5">Name (ZH)</label>
+                <input type="text" value={nameZh} onChange={(e) => setNameZh(e.target.value)}
+                  className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent/50" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-text-primary mb-1.5">Description (ZH)</label>
+                <textarea value={descZh} onChange={(e) => setDescZh(e.target.value)} rows={4}
+                  className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 resize-y" />
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Images */}

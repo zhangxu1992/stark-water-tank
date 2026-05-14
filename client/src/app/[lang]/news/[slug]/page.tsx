@@ -1,6 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { getTranslation } from '@/lib/translate';
 
 const API = process.env.SERVER_API_URL || 'http://127.0.0.1:3001';
 
@@ -23,8 +24,8 @@ export async function generateMetadata({ params }: Props) {
   };
 }
 
-export default async function NewsDetailPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
+export default async function NewsDetailPage({ params }: { params: Promise<{ slug: string; lang: string }> }) {
+  const { slug, lang } = await params;
   const article = await getArticle(slug);
   if (!article) notFound();
 
@@ -32,6 +33,9 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ slu
   const common = await getTranslations('common');
   const translations = JSON.parse(article.translations || '{}');
   const en = translations.en || {};
+  const title = getTranslation(article.translations, lang, 'title');
+  const summary = getTranslation(article.translations, lang, 'summary');
+  const content = getTranslation(article.translations, lang, 'content');
 
   return (
     <div>
@@ -40,12 +44,12 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ slu
           <div className="flex items-center gap-2 text-sm text-text-secondary mb-6">
             <Link href="/" className="hover:text-primary">{common('home')}</Link><span>/</span>
             <Link href="/news" className="hover:text-primary">{common('news')}</Link><span>/</span>
-            <span className="text-text-primary">{en.title}</span>
+            <span className="text-text-primary">{title}</span>
           </div>
 
           <article>
             <div className="text-sm text-accent font-medium mb-2">{article.category?.name}</div>
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">{en.title}</h1>
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">{title}</h1>
             <div className="text-sm text-text-secondary mb-8">{t('publishedOn')}: {new Date(article.publishedAt || article.createdAt).toLocaleDateString()}</div>
 
             {article.coverImage && (
@@ -54,7 +58,7 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ slu
               </div>
             )}
 
-            <div className="prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: en.content?.replace(/\n/g, '<br/>') || en.summary || '' }} />
+            <div className="prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: (content || summary).replace(/\n/g, '<br/>') }} />
           </article>
         </div>
       </section>

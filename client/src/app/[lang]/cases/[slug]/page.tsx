@@ -1,6 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { getTranslation } from '@/lib/translate';
 
 const API = process.env.SERVER_API_URL || 'http://127.0.0.1:3001';
 
@@ -23,8 +24,8 @@ export async function generateMetadata({ params }: Props) {
   };
 }
 
-export default async function CaseDetailPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
+export default async function CaseDetailPage({ params }: { params: Promise<{ slug: string; lang: string }> }) {
+  const { slug, lang } = await params;
   const item = await getCase(slug);
   if (!item) notFound();
 
@@ -32,6 +33,9 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ slu
   const t = await getTranslations('cases');
   const translations = JSON.parse(item.translations || '{}');
   const en = translations.en || {};
+  const name = getTranslation(item.translations, lang, 'name');
+  const description = getTranslation(item.translations, lang, 'description');
+  const content = getTranslation(item.translations, lang, 'content');
   const images = JSON.parse(item.images || '[]');
 
   return (
@@ -41,11 +45,11 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ slu
           <div className="flex items-center gap-2 text-sm text-text-secondary mb-8">
             <Link href="/" className="hover:text-primary">{common('home')}</Link><span>/</span>
             <Link href="/cases" className="hover:text-primary">{common('cases')}</Link><span>/</span>
-            <span className="text-text-primary">{en.name}</span>
+            <span className="text-text-primary">{name}</span>
           </div>
 
           <article className="max-w-4xl">
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-6">{en.name}</h1>
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-6">{name}</h1>
 
             {images.length > 0 && (
               <div className="space-y-4 mb-8">
@@ -64,7 +68,7 @@ export default async function CaseDetailPage({ params }: { params: Promise<{ slu
               </div>
             )}
 
-            <div className="prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: en.content?.replace(/\n/g, '<br/>') || en.description || '' }} />
+            <div className="prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: (content || description).replace(/\n/g, '<br/>') }} />
           </article>
         </div>
       </section>

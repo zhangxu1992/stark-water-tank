@@ -14,6 +14,7 @@ export default function FaqsAdminPage() {
   const [answerEn, setAnswerEn] = useState('');
   const [questionZh, setQuestionZh] = useState('');
   const [answerZh, setAnswerZh] = useState('');
+  const [showZh, setShowZh] = useState(false);
   const [isPublished, setIsPublished] = useState(true);
   const [sortOrder, setSortOrder] = useState(0);
 
@@ -36,8 +37,7 @@ export default function FaqsAdminPage() {
     try {
       if (editingId) await apiClient.put(`/api/faqs/${editingId}`, data, token!);
       else await apiClient.post('/api/faqs', data, token!);
-      setEditingId(null); setQuestionEn(''); setAnswerEn(''); setQuestionZh(''); setAnswerZh('');
-      setIsPublished(true); setSortOrder(0);
+      cancelEdit();
       loadFaqs();
     } catch {}
   }
@@ -47,22 +47,22 @@ export default function FaqsAdminPage() {
     const t = JSON.parse(faq.translations || '{}');
     setQuestionEn(t.en?.question || ''); setAnswerEn(t.en?.answer || '');
     setQuestionZh(t.zh?.question || ''); setAnswerZh(t.zh?.answer || '');
+    if (t.zh?.question) setShowZh(true);
   }
 
   async function handleDelete(id: string) {
     if (!confirm('Delete this FAQ?')) return;
-    const token = getToken();
-    try { await apiClient.delete(`/api/faqs/${id}`, token!); loadFaqs(); } catch {}
+    try { await apiClient.delete(`/api/faqs/${id}`, getToken()!); loadFaqs(); } catch {}
   }
 
   function cancelEdit() {
     setEditingId(null); setQuestionEn(''); setAnswerEn(''); setQuestionZh(''); setAnswerZh('');
-    setIsPublished(true); setSortOrder(0);
+    setIsPublished(true); setSortOrder(0); setShowZh(false);
   }
 
   if (loading) return <div className="space-y-4"><h1 className="text-2xl font-semibold">FAQs</h1><div className="space-y-2">{Array.from({length:3}).map((_,i)=>(<div key={i} className="h-20 skeleton rounded-xl"/>))}</div></div>;
 
-  const fCls = "w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent/50";
+  const f = "w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent/50";
 
   return (
     <div className="max-w-4xl space-y-6">
@@ -71,18 +71,27 @@ export default function FaqsAdminPage() {
       {/* Form */}
       <div className="bg-white rounded-2xl border border-border shadow-sm p-6 space-y-4">
         <h2 className="text-lg font-semibold">{editingId ? 'Edit FAQ' : 'Add FAQ'}</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <h3 className="text-sm font-medium mb-2 text-primary">English</h3>
-            <input placeholder="Question" value={questionEn} onChange={e=>setQuestionEn(e.target.value)} className={fCls + ' mb-2'}/>
-            <textarea placeholder="Answer" value={answerEn} onChange={e=>setAnswerEn(e.target.value)} rows={3} className={fCls}/>
-          </div>
-          <div>
-            <h3 className="text-sm font-medium mb-2 text-text-secondary">Chinese</h3>
-            <input placeholder="问题" value={questionZh} onChange={e=>setQuestionZh(e.target.value)} className={fCls + ' mb-2'}/>
-            <textarea placeholder="答案" value={answerZh} onChange={e=>setAnswerZh(e.target.value)} rows={3} className={fCls}/>
-          </div>
+        <div>
+          <label className="block text-sm font-medium mb-1.5">Question *</label>
+          <input placeholder="Question" value={questionEn} onChange={e=>setQuestionEn(e.target.value)} className={f}/>
         </div>
+        <div>
+          <label className="block text-sm font-medium mb-1.5">Answer</label>
+          <textarea placeholder="Answer" value={answerEn} onChange={e=>setAnswerEn(e.target.value)} rows={3} className={f}/>
+        </div>
+
+        {/* ZH collapsible */}
+        <button type="button" onClick={() => setShowZh(!showZh)} className="flex items-center gap-2 text-sm text-text-secondary hover:text-primary transition-colors">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`transition-transform ${showZh ? 'rotate-90' : ''}`}><path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          Chinese Translation (optional, auto-fallbacks to English)
+        </button>
+        {showZh && (
+          <div className="space-y-4 pt-2 pl-4 border-l-2 border-border">
+            <div><label className="block text-sm font-medium mb-1.5">Question (ZH)</label><input placeholder="问题" value={questionZh} onChange={e=>setQuestionZh(e.target.value)} className={f}/></div>
+            <div><label className="block text-sm font-medium mb-1.5">Answer (ZH)</label><textarea placeholder="答案" value={answerZh} onChange={e=>setAnswerZh(e.target.value)} rows={3} className={f}/></div>
+          </div>
+        )}
+
         <div className="flex flex-wrap items-center gap-4">
           <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={isPublished} onChange={e=>setIsPublished(e.target.checked)} className="w-4 h-4"/>Published</label>
           <div className="flex items-center gap-2"><label className="text-sm">Order:</label><input type="number" value={sortOrder} onChange={e=>setSortOrder(parseInt(e.target.value)||0)} className="w-20 px-2 py-1 border rounded text-sm"/></div>
@@ -107,7 +116,7 @@ export default function FaqsAdminPage() {
             </div>
           </div>
         ))}
-        {faqs.length === 0 && <p className="text-center text-text-secondary py-8">No FAQs yet. Add your first one above.</p>}
+        {faqs.length === 0 && <p className="text-center text-text-secondary py-8">No FAQs yet.</p>}
       </div>
     </div>
   );

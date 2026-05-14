@@ -22,13 +22,12 @@ export default function CaseFormPage({ params }: { params: Promise<{ id: string 
   const [nameZh, setNameZh] = useState('');
   const [descZh, setDescZh] = useState('');
   const [contentZh, setContentZh] = useState('');
+  const [showZh, setShowZh] = useState(false);
   const [images, setImages] = useState<string[]>([]);
   const [isPublished, setIsPublished] = useState(true);
   const [sortOrder, setSortOrder] = useState(0);
 
-  useEffect(() => {
-    if (!isNew) loadCase();
-  }, [id]);
+  useEffect(() => { if (!isNew) loadCase(); }, [id]);
 
   async function loadCase() {
     const token = getToken();
@@ -43,6 +42,7 @@ export default function CaseFormPage({ params }: { params: Promise<{ id: string 
       const t = JSON.parse(item.translations || '{}');
       setNameEn(t.en?.name || ''); setDescEn(t.en?.description || ''); setContentEn(t.en?.content || '');
       setNameZh(t.zh?.name || ''); setDescZh(t.zh?.description || ''); setContentZh(t.zh?.content || '');
+      if (t.zh?.name) setShowZh(true);
     } catch (err) { setError('Failed to load case'); }
     finally { setLoading(false); }
   }
@@ -52,14 +52,8 @@ export default function CaseFormPage({ params }: { params: Promise<{ id: string 
     setSaving(true); setError('');
     const data = {
       slug,
-      translations: {
-        en: { name: nameEn, description: descEn, content: contentEn },
-        zh: { name: nameZh, description: descZh, content: contentZh },
-      },
-      images,
-      coverImage: images[0] || null,
-      isPublished,
-      sortOrder,
+      translations: { en: { name: nameEn, description: descEn, content: contentEn }, zh: { name: nameZh, description: descZh, content: contentZh } },
+      images, coverImage: images[0] || null, isPublished, sortOrder,
     };
     const token = getToken();
     try {
@@ -70,61 +64,68 @@ export default function CaseFormPage({ params }: { params: Promise<{ id: string 
     finally { setSaving(false); }
   }
 
-  if (loading) {
-    return <div className="space-y-4"><h1 className="text-2xl font-semibold text-text-primary">Loading...</h1>{Array.from({ length: 5 }).map((_, i) => (<div key={i} className="h-12 skeleton rounded-xl" />))}</div>;
-  }
+  if (loading) return <div className="space-y-4"><h1 className="text-2xl font-semibold">Loading...</h1>{Array.from({ length: 5 }).map((_, i) => (<div key={i} className="h-12 skeleton rounded-xl" />))}</div>;
 
-  const fieldCls = "w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 resize-y";
+  const f = "w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 resize-y";
 
   return (
     <div className="max-w-4xl space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-text-primary">{isNew ? 'New Case' : 'Edit Case'}</h1>
-        <button onClick={() => router.push('/admin/cases')} className="px-4 py-2 border border-border text-sm rounded-lg hover:bg-bg-alt transition-colors">Cancel</button>
+        <button onClick={() => router.push('/admin/cases')} className="px-4 py-2 border border-border text-sm rounded-lg hover:bg-bg-alt">Cancel</button>
       </div>
       {error && <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">{error}</div>}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="bg-white rounded-2xl border border-border shadow-sm p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-text-primary">Basic Information</h2>
+          <h2 className="text-lg font-semibold">Basic Information</h2>
           <div>
-            <label className="block text-sm font-medium text-text-primary mb-1.5">Slug *</label>
-            <input type="text" value={slug} onChange={(e) => setSlug(e.target.value)} required placeholder="kenya-water-project" className={fieldCls} />
+            <label className="block text-sm font-medium mb-1.5">Slug *</label>
+            <input type="text" value={slug} onChange={e => setSlug(e.target.value)} required placeholder="kenya-water-project" className={f} />
           </div>
         </div>
 
         {/* EN */}
         <div className="bg-white rounded-2xl border border-border shadow-sm p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-text-primary">English Content</h2>
-          <div><label className="block text-sm font-medium text-text-primary mb-1.5">Name *</label><input type="text" value={nameEn} onChange={(e) => setNameEn(e.target.value)} required className={fieldCls} /></div>
-          <div><label className="block text-sm font-medium text-text-primary mb-1.5">Description</label><textarea value={descEn} onChange={(e) => setDescEn(e.target.value)} rows={3} className={fieldCls} /></div>
-          <div><label className="block text-sm font-medium text-text-primary mb-1.5">Content</label><textarea value={contentEn} onChange={(e) => setContentEn(e.target.value)} rows={6} className={fieldCls} /></div>
+          <h2 className="text-lg font-semibold">Content (English)</h2>
+          <div><label className="block text-sm font-medium mb-1.5">Name *</label><input type="text" value={nameEn} onChange={e => setNameEn(e.target.value)} required className={f} /></div>
+          <div><label className="block text-sm font-medium mb-1.5">Description</label><textarea value={descEn} onChange={e => setDescEn(e.target.value)} rows={3} className={f} /></div>
+          <div><label className="block text-sm font-medium mb-1.5">Content</label><textarea value={contentEn} onChange={e => setContentEn(e.target.value)} rows={6} className={f} /></div>
         </div>
 
-        {/* ZH */}
+        {/* ZH (collapsible) */}
         <div className="bg-white rounded-2xl border border-border shadow-sm p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-text-primary">Chinese Content</h2>
-          <div><label className="block text-sm font-medium text-text-primary mb-1.5">Name</label><input type="text" value={nameZh} onChange={(e) => setNameZh(e.target.value)} className={fieldCls} /></div>
-          <div><label className="block text-sm font-medium text-text-primary mb-1.5">Description</label><textarea value={descZh} onChange={(e) => setDescZh(e.target.value)} rows={3} className={fieldCls} /></div>
-          <div><label className="block text-sm font-medium text-text-primary mb-1.5">Content</label><textarea value={contentZh} onChange={(e) => setContentZh(e.target.value)} rows={6} className={fieldCls} /></div>
+          <button type="button" onClick={() => setShowZh(!showZh)} className="flex items-center gap-2 text-sm text-text-secondary hover:text-primary transition-colors">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`transition-transform ${showZh ? 'rotate-90' : ''}`}>
+              <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            Chinese Translation (optional, auto-fallbacks to English)
+          </button>
+          {showZh && (
+            <div className="space-y-4 pt-2">
+              <div><label className="block text-sm font-medium mb-1.5">Name (ZH)</label><input type="text" value={nameZh} onChange={e => setNameZh(e.target.value)} className={f} /></div>
+              <div><label className="block text-sm font-medium mb-1.5">Description (ZH)</label><textarea value={descZh} onChange={e => setDescZh(e.target.value)} rows={3} className={f} /></div>
+              <div><label className="block text-sm font-medium mb-1.5">Content (ZH)</label><textarea value={contentZh} onChange={e => setContentZh(e.target.value)} rows={6} className={f} /></div>
+            </div>
+          )}
         </div>
 
         <div className="bg-white rounded-2xl border border-border shadow-sm p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-text-primary">Images</h2>
+          <h2 className="text-lg font-semibold">Images</h2>
           <ImageUploader images={images} onChange={setImages} />
         </div>
 
         <div className="bg-white rounded-2xl border border-border shadow-sm p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-text-primary">Settings</h2>
+          <h2 className="text-lg font-semibold">Settings</h2>
           <div className="flex flex-wrap gap-6">
-            <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={isPublished} onChange={(e) => setIsPublished(e.target.checked)} className="w-4 h-4 rounded border-border text-accent focus:ring-accent" />Published</label>
-            <div><label className="block text-sm font-medium text-text-primary mb-1.5">Sort Order</label><input type="number" value={sortOrder} onChange={(e) => setSortOrder(parseInt(e.target.value) || 0)} className="w-24 px-3 py-2 border border-border rounded-lg text-sm" /></div>
+            <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={isPublished} onChange={e => setIsPublished(e.target.checked)} className="w-4 h-4 rounded border-border text-accent" />Published</label>
+            <div><label className="block text-sm font-medium mb-1.5">Sort Order</label><input type="number" value={sortOrder} onChange={e => setSortOrder(parseInt(e.target.value) || 0)} className="w-24 px-3 py-2 border border-border rounded-lg text-sm" /></div>
           </div>
         </div>
 
         <div className="flex gap-4">
-          <button type="submit" disabled={saving} className="px-6 py-2.5 bg-primary text-white font-medium rounded-lg hover:bg-primary-light disabled:opacity-50 transition-colors">{saving ? 'Saving...' : isNew ? 'Create Case' : 'Save Changes'}</button>
-          <button type="button" onClick={() => router.push('/admin/cases')} className="px-6 py-2.5 border border-border text-text-secondary font-medium rounded-lg hover:bg-bg-alt transition-colors">Cancel</button>
+          <button type="submit" disabled={saving} className="px-6 py-2.5 bg-primary text-white font-medium rounded-lg hover:bg-primary-light disabled:opacity-50">{saving ? 'Saving...' : isNew ? 'Create Case' : 'Save Changes'}</button>
+          <button type="button" onClick={() => router.push('/admin/cases')} className="px-6 py-2.5 border border-border text-text-secondary font-medium rounded-lg hover:bg-bg-alt">Cancel</button>
         </div>
       </form>
     </div>

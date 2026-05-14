@@ -1,5 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
+import { getTranslation } from '@/lib/translate';
 
 const API = process.env.SERVER_API_URL || 'http://127.0.0.1:3001';
 
@@ -16,11 +17,8 @@ async function getProducts(categoryId?: string) {
   } catch { return []; }
 }
 
-function getName(item: any, field = 'name'): string {
-  try { const t = JSON.parse(item.translations || '{}'); return t.en?.[field] || ''; } catch { return ''; }
-}
-
-export default async function ProductsPage({ searchParams }: { searchParams: Promise<{ category?: string }> }) {
+export default async function ProductsPage({ params, searchParams }: { params: Promise<{ lang: string }>; searchParams: Promise<{ category?: string }> }) {
+  const { lang } = await params;
   const { category } = await searchParams;
   const t = await getTranslations('products');
   const common = await getTranslations('common');
@@ -70,8 +68,8 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
                   </div>
                   <div className="p-5">
                     <div className="text-xs text-accent mb-1">{p.category?.name}</div>
-                    <h3 className="font-semibold text-text-primary group-hover:text-accent transition-colors">{getName(p)}</h3>
-                    <p className="text-sm text-text-secondary mt-2 line-clamp-2">{getName(p, 'description')}</p>
+                    <h3 className="font-semibold text-text-primary group-hover:text-accent transition-colors">{getTranslation(p.translations, lang, 'name')}</h3>
+                    <p className="text-sm text-text-secondary mt-2 line-clamp-2">{getTranslation(p.translations, lang, 'description')}</p>
                   </div>
                 </Link>
               ))}
