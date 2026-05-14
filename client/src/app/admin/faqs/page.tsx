@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import apiClient from '@/lib/api-client';
 import { getToken } from '@/lib/auth';
 
-interface Faq { id: string; translations: string; isPublished: boolean; sortOrder: number; }
+interface Faq { id: string; translations: string; isPublished: boolean; sortOrder: number; metaTitle: string | null; metaDescription: string | null; metaKeywords: string | null; }
 
 export default function FaqsAdminPage() {
   const [faqs, setFaqs] = useState<Faq[]>([]);
@@ -15,6 +15,10 @@ export default function FaqsAdminPage() {
   const [questionZh, setQuestionZh] = useState('');
   const [answerZh, setAnswerZh] = useState('');
   const [showZh, setShowZh] = useState(false);
+  const [metaTitle, setMetaTitle] = useState('');
+  const [metaDesc, setMetaDesc] = useState('');
+  const [metaKeywords, setMetaKeywords] = useState('');
+  const [showSeo, setShowSeo] = useState(false);
   const [isPublished, setIsPublished] = useState(true);
   const [sortOrder, setSortOrder] = useState(0);
 
@@ -23,8 +27,7 @@ export default function FaqsAdminPage() {
   async function loadFaqs() {
     const token = getToken(); if (!token) return;
     setLoading(true);
-    try { setFaqs(await apiClient.get<Faq[]>('/api/faqs/admin', token)); } catch {}
-    finally { setLoading(false); }
+    try { setFaqs(await apiClient.get<Faq[]>('/api/faqs/admin', token)); } catch {} finally { setLoading(false); }
   }
 
   function getQuestion(t: string): string {
@@ -33,7 +36,11 @@ export default function FaqsAdminPage() {
 
   async function handleSave() {
     const token = getToken(); if (!token) return;
-    const data = { translations: { en: { question: questionEn, answer: answerEn }, zh: { question: questionZh, answer: answerZh } }, isPublished, sortOrder };
+    const data = {
+      translations: { en: { question: questionEn, answer: answerEn }, zh: { question: questionZh, answer: answerZh } },
+      metaTitle: metaTitle || null, metaDescription: metaDesc || null, metaKeywords: metaKeywords || null,
+      isPublished, sortOrder,
+    };
     try {
       if (editingId) await apiClient.put(`/api/faqs/${editingId}`, data, token!);
       else await apiClient.post('/api/faqs', data, token!);
@@ -48,6 +55,8 @@ export default function FaqsAdminPage() {
     setQuestionEn(t.en?.question || ''); setAnswerEn(t.en?.answer || '');
     setQuestionZh(t.zh?.question || ''); setAnswerZh(t.zh?.answer || '');
     if (t.zh?.question) setShowZh(true);
+    setMetaTitle(faq.metaTitle || ''); setMetaDesc(faq.metaDescription || ''); setMetaKeywords(faq.metaKeywords || '');
+    if (faq.metaTitle) setShowSeo(true);
   }
 
   async function handleDelete(id: string) {
@@ -57,7 +66,8 @@ export default function FaqsAdminPage() {
 
   function cancelEdit() {
     setEditingId(null); setQuestionEn(''); setAnswerEn(''); setQuestionZh(''); setAnswerZh('');
-    setIsPublished(true); setSortOrder(0); setShowZh(false);
+    setMetaTitle(''); setMetaDesc(''); setMetaKeywords('');
+    setIsPublished(true); setSortOrder(0); setShowZh(false); setShowSeo(false);
   }
 
   if (loading) return <div className="space-y-4"><h1 className="text-2xl font-semibold">FAQs</h1><div className="space-y-2">{Array.from({length:3}).map((_,i)=>(<div key={i} className="h-20 skeleton rounded-xl"/>))}</div></div>;
@@ -68,7 +78,6 @@ export default function FaqsAdminPage() {
     <div className="max-w-4xl space-y-6">
       <h1 className="text-2xl font-semibold text-text-primary">FAQs</h1>
 
-      {/* Form */}
       <div className="bg-white rounded-2xl border border-border shadow-sm p-6 space-y-4">
         <h2 className="text-lg font-semibold">{editingId ? 'Edit FAQ' : 'Add FAQ'}</h2>
         <div>
@@ -80,15 +89,27 @@ export default function FaqsAdminPage() {
           <textarea placeholder="Answer" value={answerEn} onChange={e=>setAnswerEn(e.target.value)} rows={3} className={f}/>
         </div>
 
-        {/* ZH collapsible */}
         <button type="button" onClick={() => setShowZh(!showZh)} className="flex items-center gap-2 text-sm text-text-secondary hover:text-primary transition-colors">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`transition-transform ${showZh ? 'rotate-90' : ''}`}><path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round"/></svg>
-          Chinese Translation (optional, auto-fallbacks to English)
+          Chinese Translation (optional)
         </button>
         {showZh && (
           <div className="space-y-4 pt-2 pl-4 border-l-2 border-border">
             <div><label className="block text-sm font-medium mb-1.5">Question (ZH)</label><input placeholder="问题" value={questionZh} onChange={e=>setQuestionZh(e.target.value)} className={f}/></div>
             <div><label className="block text-sm font-medium mb-1.5">Answer (ZH)</label><textarea placeholder="答案" value={answerZh} onChange={e=>setAnswerZh(e.target.value)} rows={3} className={f}/></div>
+          </div>
+        )}
+
+        {/* SEO */}
+        <button type="button" onClick={() => setShowSeo(!showSeo)} className="flex items-center gap-2 text-sm text-text-secondary hover:text-primary transition-colors">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`transition-transform ${showSeo ? 'rotate-90' : ''}`}><path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          SEO Information (optional, for landing page SEO if this FAQ appears on /about)
+        </button>
+        {showSeo && (
+          <div className="space-y-3 pt-2 pl-4 border-l-2 border-border">
+            <div><label className="block text-sm font-medium mb-1">Meta Title</label><input value={metaTitle} onChange={e=>setMetaTitle(e.target.value)} className={f}/></div>
+            <div><label className="block text-sm font-medium mb-1">Meta Description</label><textarea value={metaDesc} onChange={e=>setMetaDesc(e.target.value)} rows={2} className={f}/></div>
+            <div><label className="block text-sm font-medium mb-1">Meta Keywords</label><input value={metaKeywords} onChange={e=>setMetaKeywords(e.target.value)} className={f}/></div>
           </div>
         )}
 
@@ -102,7 +123,6 @@ export default function FaqsAdminPage() {
         </div>
       </div>
 
-      {/* List */}
       <div className="space-y-3">
         {faqs.map(faq => (
           <div key={faq.id} className="bg-white rounded-xl border border-border p-4 flex items-start justify-between gap-4">

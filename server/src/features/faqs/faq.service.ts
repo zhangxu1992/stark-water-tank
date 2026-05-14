@@ -11,6 +11,9 @@ export class FaqService {
   async create(input: CreateFaqInput) {
     return this.repo.create({
       translations: JSON.stringify(input.translations),
+      metaTitle: input.metaTitle,
+      metaDescription: input.metaDescription,
+      metaKeywords: input.metaKeywords,
       isPublished: input.isPublished,
       sortOrder: input.sortOrder,
     });
@@ -21,6 +24,9 @@ export class FaqService {
     if (!item) throw new NotFoundError('FAQ', id);
     const data: any = {};
     if (input.translations !== undefined) data.translations = JSON.stringify(input.translations);
+    if (input.metaTitle !== undefined) data.metaTitle = input.metaTitle;
+    if (input.metaDescription !== undefined) data.metaDescription = input.metaDescription;
+    if (input.metaKeywords !== undefined) data.metaKeywords = input.metaKeywords;
     if (input.isPublished !== undefined) data.isPublished = input.isPublished;
     if (input.sortOrder !== undefined) data.sortOrder = input.sortOrder;
     return this.repo.update(id, data);
