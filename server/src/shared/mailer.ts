@@ -37,7 +37,7 @@ export async function sendInquiryNotification(inquiry: {
     const transporter = nodemailer.createTransport({
       host,
       port: config.email.port,
-      secure: false,
+      secure: config.email.port === 465, // SSL for port 465, STARTTLS for 587
       auth: { user, pass },
     });
     await transporter.sendMail({
