@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { getToken, getAdminInfo, removeToken, isAuthenticated } from '@/lib/auth';
+import apiClient from '@/lib/api-client';
 
 const menuItems = [
   { href: '/admin', label: 'Dashboard', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
@@ -26,8 +27,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [admin, setAdmin] = useState<{ username: string; role: string } | null>(null);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [hydrated, setHydrated] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
+
+  // Ensure hydration is complete before rendering role-dependent UI
+  useEffect(() => { setHydrated(true); }, []);
 
   useEffect(() => {
     if (!isAuthenticated() && pathname !== '/admin/login') {
@@ -36,12 +41,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }
     const info = getAdminInfo();
     if (info) setAdmin(info);
-    // Fetch unread count
+    // Fetch unread count using apiClient (with auto-refresh)
     const token = getToken();
-    if (token) {
-      fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/dashboard/unread-inquiries-count`, {
-        headers: { Authorization: `Bearer ${token}` },
-      }).then(r => r.json()).then(d => setUnreadCount(d.unread || 0)).catch(() => {});
+    if (token && pathname === '/admin') {
+      apiClient.get<{ unread: number }>('/api/dashboard/unread-inquiries-count', token)
+        .then(d => setUnreadCount(d.unread || 0))
+        .catch(() => {});
     }
   }, [pathname, router]);
 
@@ -60,59 +65,77 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <div className="min-h-[100dvh] flex">
-      {/* Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 z-40 w-64 bg-bg-dark text-text-light transform transition-transform duration-200 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
-        <div className="flex items-center justify-between h-16 px-6 border-b border-white/10">
-          <Link href="/admin" className="text-xl font-bold tracking-tight">STARK</Link>
-          <button
-            onClick={() => setSidebarOpen(false)}
-            className="lg:hidden p-1 text-slate-400 hover:text-white"
-          >
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-            </svg>
-          </button>
-        </div>
-
-        <nav className="p-4 space-y-1 overflow-y-auto">
-          {allMenuItems.map((item) => {
-            const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setSidebarOpen(false)}
-                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
-                  isActive
-                    ? 'bg-accent text-white'
-                    : 'text-slate-400 hover:text-white hover:bg-white/10'
-                }`}
-              >
+      {/* Sidebar - only render interactive content after hydration */}
+      {!hydrated ? (
+        <aside className="fixed inset-y-0 left-0 z-40 w-64 bg-bg-dark text-text-light">
+          <div className="flex items-center h-16 px-6 border-b border-white/10">
+            <span className="text-xl font-bold tracking-tight">STARK</span>
+          </div>
+          <nav className="p-4 space-y-1">
+            {menuItems.map((item) => (
+              <div key={item.href} className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-400">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                   <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
                 </svg>
                 {item.label}
-                {item.href === '/admin/inquiries' && unreadCount > 0 && (
-                  <span className="ml-auto inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-red-500 text-white text-[10px] font-bold">{unreadCount}</span>
-                )}
-              </Link>
-            );
-          })}
-        </nav>
-
-        {/* Logout */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-white/10">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-slate-400">{admin?.username}</span>
+              </div>
+            ))}
+          </nav>
+        </aside>
+      ) : (
+        <aside className={`fixed inset-y-0 left-0 z-40 w-64 bg-bg-dark text-text-light transform transition-transform duration-200 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
+          <div className="flex items-center justify-between h-16 px-6 border-b border-white/10">
+            <Link href="/admin" className="text-xl font-bold tracking-tight">STARK</Link>
             <button
-              onClick={handleLogout}
-              className="text-sm text-slate-400 hover:text-white transition-colors"
+              onClick={() => setSidebarOpen(false)}
+              className="lg:hidden p-1 text-slate-400 hover:text-white"
             >
-              Logout
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
             </button>
           </div>
-        </div>
-      </aside>
+
+          <nav className="p-4 space-y-1 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 8rem)' }}>
+            {allMenuItems.map((item) => {
+              const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setSidebarOpen(false)}
+                  className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+                    isActive
+                      ? 'bg-accent text-white'
+                      : 'text-slate-400 hover:text-white hover:bg-white/10'
+                  }`}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
+                  </svg>
+                  {item.label}
+                  {item.href === '/admin/inquiries' && unreadCount > 0 && (
+                    <span className="ml-auto inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-red-500 text-white text-[10px] font-bold">{unreadCount}</span>
+                  )}
+                </Link>
+              );
+            })}
+          </nav>
+
+          {/* Logout */}
+          <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-white/10">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-slate-400">{admin?.username}</span>
+              <button
+                onClick={handleLogout}
+                className="text-sm text-slate-400 hover:text-white transition-colors"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </aside>
+      )}
 
       {/* Main Content */}
       <div className="flex-1 lg:ml-64">

@@ -4,7 +4,7 @@ import { getTranslation } from '@/lib/translate';
 const API = process.env.SERVER_API_URL || 'http://127.0.0.1:3001';
 
 async function getFaqs() {
-  try { const r = await fetch(`${API}/api/faqs`, { next: { revalidate: 300 } }); return await r.json(); } catch { return []; }
+  try { const r = await fetch(`${API}/api/faqs`, { next: { revalidate: 60 } }); return await r.json(); } catch { return []; }
 }
 
 export default async function FaqPage({ params }: { params: Promise<{ lang: string }> }) {
