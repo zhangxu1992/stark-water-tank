@@ -56,16 +56,10 @@ export default function ContactPage() {
         style={{ backgroundImage: `url(${API}/uploads/contact-hero.webp)` }}
       >
         <div className="absolute inset-0 bg-primary/85" />
-        <div className="relative pt-24 md:pt-32 pb-8">
-          <div className="max-w-[1400px] mx-auto px-4 text-center">
-            <h1 className="text-3xl md:text-5xl font-bold text-white tracking-tight">{t('title')}</h1>
-            <p className="text-slate-300/70 mt-4 max-w-xl mx-auto">{t('subtitle')}</p>
-          </div>
-        </div>
         {info.company_brief && (
-          <div className="relative max-w-[1400px] mx-auto px-4 md:px-6 lg:px-8 pb-20 md:pb-28">
+          <div className="relative max-w-[1400px] mx-auto px-4 md:px-6 lg:px-8 py-24 md:py-32">
             <div className="max-w-4xl mx-auto text-center">
-              <h2 className="text-2xl md:text-3xl font-bold tracking-tighter mb-6 text-white/90">{t('getInTouch')}</h2>
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tighter mb-6 text-white">{t('getInTouch')}</h2>
               <p className="text-slate-200/80 leading-relaxed max-w-[65ch] mx-auto text-lg">{info.company_brief}</p>
             </div>
           </div>
