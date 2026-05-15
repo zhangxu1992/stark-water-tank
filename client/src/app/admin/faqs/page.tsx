@@ -21,6 +21,7 @@ export default function FaqsAdminPage() {
   const [showSeo, setShowSeo] = useState(false);
   const [isPublished, setIsPublished] = useState(true);
   const [sortOrder, setSortOrder] = useState(0);
+  const [saveError, setSaveError] = useState('');
 
   useEffect(() => { loadFaqs(); }, []);
 
@@ -35,6 +36,7 @@ export default function FaqsAdminPage() {
   }
 
   async function handleSave() {
+    setSaveError('');
     const token = getToken(); if (!token) return;
     const data = {
       translations: { en: { question: questionEn, answer: answerEn }, zh: { question: questionZh, answer: answerZh } },
@@ -46,7 +48,9 @@ export default function FaqsAdminPage() {
       else await apiClient.post('/api/faqs', data, token!);
       cancelEdit();
       loadFaqs();
-    } catch {}
+    } catch (e: any) {
+      setSaveError(e.message || 'Save failed');
+    }
   }
 
   async function handleEdit(faq: Faq) {
@@ -68,6 +72,7 @@ export default function FaqsAdminPage() {
     setEditingId(null); setQuestionEn(''); setAnswerEn(''); setQuestionZh(''); setAnswerZh('');
     setMetaTitle(''); setMetaDesc(''); setMetaKeywords('');
     setIsPublished(true); setSortOrder(0); setShowZh(false); setShowSeo(false);
+    setSaveError('');
   }
 
   if (loading) return <div className="space-y-4"><h1 className="text-2xl font-semibold">FAQs</h1><div className="space-y-2">{Array.from({length:3}).map((_,i)=>(<div key={i} className="h-20 skeleton rounded-xl"/>))}</div></div>;
@@ -80,6 +85,7 @@ export default function FaqsAdminPage() {
 
       <div className="bg-white rounded-2xl border border-border shadow-sm p-6 space-y-4">
         <h2 className="text-lg font-semibold">{editingId ? 'Edit FAQ' : 'Add FAQ'}</h2>
+        {saveError && <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">{saveError}</div>}
         <div>
           <label className="block text-sm font-medium mb-1.5">Question *</label>
           <input placeholder="Question" value={questionEn} onChange={e=>setQuestionEn(e.target.value)} className={f}/>
