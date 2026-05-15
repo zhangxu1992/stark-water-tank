@@ -91,7 +91,6 @@
     "whatsapp": "WhatsApp",
     "followUs": "关注我们",
     "ourLocation": "公司位置",
-    "aboutUs": "关于我们",
     "formTitle": "发送留言",
     "formName": "您的姓名",
     "formEmail": "邮箱地址",
@@ -101,7 +100,8 @@
     "formMessage": "您的留言",
     "sendMessage": "发送留言",
     "formSuccess": "感谢您！您的询盘已提交，我们将尽快回复。",
-    "formError": "抱歉，出现了一些问题，请重试。"
+    "formError": "抱歉，出现了一些问题，请重试。",
+    "getInTouch": "联系我们"
   },
   "footer": {
     "about": "STARK环保科技有限公司是专业的不锈钢水箱和水处理设备制造商，服务全球100多个国家的客户。",

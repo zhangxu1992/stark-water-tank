@@ -99,9 +99,9 @@
     "contactInfo": "Kontaktinformationen",
     "mobile": "Mobil",
     "ourLocation": "Unser Standort",
-    "aboutUs": "Über Uns",
     "formTitle": "Senden Sie uns eine Nachricht",
-    "sendMessage": "Nachricht Senden"
+    "sendMessage": "Nachricht Senden",
+    "getInTouch": "Kontaktieren Sie uns!"
   },
   "footer": {
     "about": "STARK ist ein professioneller Hersteller von Edelstahltanks.",

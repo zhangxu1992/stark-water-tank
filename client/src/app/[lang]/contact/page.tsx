@@ -62,6 +62,18 @@ export default function ContactPage() {
         </div>
       </section>
 
+      {/* About Us / Company Brief */}
+      {info.company_brief && (
+        <section className="py-16 md:py-24 bg-bg-alt">
+          <div className="max-w-[1400px] mx-auto px-4 md:px-6 lg:px-8">
+            <div className="max-w-4xl mx-auto text-center">
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tighter mb-6">{t('getInTouch')}</h2>
+              <p className="text-text-secondary leading-relaxed max-w-[65ch] mx-auto text-lg">{info.company_brief}</p>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Contact Info + Form */}
       <section className="py-16 md:py-24">
         <div className="max-w-[1400px] mx-auto px-4 md:px-6 lg:px-8">
@@ -125,7 +137,7 @@ export default function ContactPage() {
           <h2 className="text-2xl font-semibold text-center mb-8">{t('ourLocation')}</h2>
           <div className="rounded-2xl overflow-hidden border border-border shadow-sm">
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3692.6!2d113.7609!3d22.9523!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x315462b1a14a8e3b%3A0x4e8e8c2e5e3a7b2a!2z5aSn5bqm5biC5p2x5Z-O5Yy65a2m6Zmi6LevMjblj7c!5e0!3m2!1szh!2scn!4v1715773600000"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3695.4!2d113.7682!3d23.05161!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3403753197a288f3%3A0x223c02342c08c428!2z6b6Z5pi55b6u5Yib5ZyT!5e0!3m2!1szh!2scn!4v1715773600000"
               width="100%" height="400" style={{ border: 0 }} allowFullScreen loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
               title="STARK Location"
@@ -134,17 +146,7 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* Company Brief */}
-      {info.company_brief && (
-        <section className="pb-16 md:pb-24">
-          <div className="max-w-[1400px] mx-auto px-4 md:px-6 lg:px-8">
-            <div className="bg-bg-alt rounded-2xl p-8 md:p-12 max-w-4xl mx-auto">
-              <h2 className="text-2xl font-semibold mb-6 text-center">{t('aboutUs')}</h2>
-              <p className="text-text-secondary leading-relaxed max-w-[65ch] mx-auto">{info.company_brief}</p>
-            </div>
-          </div>
-        </section>
-      )}
+
     </div>
   );
 }

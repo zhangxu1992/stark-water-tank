@@ -91,7 +91,6 @@
     "whatsapp": "WhatsApp",
     "followUs": "Follow Us",
     "ourLocation": "Our Location",
-    "aboutUs": "About Us",
     "formTitle": "Send Us a Message",
     "formName": "Your Name",
     "formEmail": "Email Address",
@@ -101,7 +100,8 @@
     "formMessage": "Your Message",
     "sendMessage": "Send Message",
     "formSuccess": "Thank you! Your inquiry has been submitted. We will get back to you shortly.",
-    "formError": "Sorry, something went wrong. Please try again."
+    "formError": "Sorry, something went wrong. Please try again.",
+    "getInTouch": "Get In Touch!"
   },
   "footer": {
     "about": "STARK Environmental Solutions Ltd. is a professional manufacturer of stainless steel water tanks and water treatment equipment, serving customers in over 100 countries worldwide.",

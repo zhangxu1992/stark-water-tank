@@ -98,9 +98,9 @@
     "contactInfo": "연락처 정보",
     "mobile": "휴대전화",
     "ourLocation": "회사 위치",
-    "aboutUs": "회사 소개",
     "formTitle": "메시지 보내기",
-    "sendMessage": "보내기"
+    "sendMessage": "보내기",
+    "getInTouch": "문의하기"
   },
   "footer": {
     "about": "STARK는 스테인리스 스틸 탱크 전문 제조업체입니다.",

@@ -98,9 +98,9 @@
     "contactInfo": "معلومات الاتصال",
     "mobile": "الجوال",
     "ourLocation": "موقعنا",
-    "aboutUs": "معلومات عنا",
     "formTitle": "أرسل لنا رسالة",
-    "sendMessage": "إرسال الرسالة"
+    "sendMessage": "إرسال الرسالة",
+    "getInTouch": "تواصل معنا!"
   },
   "footer": {
     "about": "STARK هي شركة مصنعة محترفة لخزانات الفولاذ المقاوم للصدأ.",
