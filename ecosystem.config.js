@@ -2,9 +2,10 @@ module.exports = {
   apps: [
     {
       name: 'stark-client',
-      script: 'node_modules/.bin/next',
-      args: 'dev -p 3000',
+      script: 'npx',
+      args: 'next dev -p 3000',
       cwd: './client',
+      interpreter: 'none',
       env: {
         NODE_ENV: 'development',
       },
